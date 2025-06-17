@@ -35,6 +35,11 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         // Set a 200 (okay) response code
         http_response_code(200);
         echo "Thank You! Your message has been sent. We'll get back to you shortly.";
+        
+        // Log the submission (optional)
+        $log_file = "contact_submissions.log";
+        $log_message = date("Y-m-d H:i:s") . " - New contact from: $name ($email)\n";
+        file_put_contents($log_file, $log_message, FILE_APPEND);
     } else {
         // Set a 500 (internal server error) response code
         http_response_code(500);

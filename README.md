@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 # HomeAid Services Landing Page
 
 A modern, responsive landing page for HomeAid Services, a home healthcare provider led by Rehan Khalid.
@@ -68,3 +69,6 @@ The contact form sends submissions to `homeaidhomecareservices@gmail.com`. For t
 - Edge (latest)
 - Opera (latest)
 - Mobile browsers (iOS Safari, Android Chrome)
+=======
+# homeaid
+>>>>>>> 78cd455aae9ffdc280f8ebee8de32e7b3c55fe55
