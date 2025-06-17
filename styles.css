@@ -1,10 +1,10 @@
 /* Base Styles */
 :root {
-    --primary-color: #4CAF50;
-    --secondary-color: #388E3C;
-    --accent-color: #FF5722;
-    --text-color: #333;
-    --light-text: #777;
+    --primary-color: #98D8AA; /* Pastel green */
+    --secondary-color: #77C48D; /* Slightly darker pastel green */
+    --accent-color: #000000; /* Black */
+    --text-color: #000000; /* Black text */
+    --light-text: #333333; /* Dark gray for lighter text */
     --bg-color: #fff;
     --light-bg: #f8f9fa;
     --border-radius: 8px;
