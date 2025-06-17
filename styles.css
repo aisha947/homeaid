@@ -1,12 +1,13 @@
 /* Base Styles */
 :root {
     --primary-color: #98D8AA; /* Pastel green */
-    --secondary-color: #77C48D; /* Slightly darker pastel green */
+    --secondary-color: #2E8B57; /* Darker green for services */
     --accent-color: #000000; /* Black */
     --text-color: #000000; /* Black text */
     --light-text: #333333; /* Dark gray for lighter text */
     --bg-color: #FFCBA4; /* Light orange/peach (similar to orange heart emoji) */
     --light-bg: #FFB380; /* Slightly darker orange for sections */
+    --header-text-color: #8B0000; /* Dark red (blood color) for header */
     --border-radius: 8px;
     --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
@@ -93,7 +94,7 @@ ul {
     transform: translateX(-50%);
     width: 80px;
     height: 4px;
-    background-color: var(--primary-color);
+    background-color: var(--secondary-color);
     border-radius: 2px;
     animation: slideInFromBottom 1s ease-out 0.5s both;
 }
@@ -124,7 +125,7 @@ header .container {
 .logo h1 {
     font-size: 1.8rem;
     font-weight: 700;
-    color: var(--primary-color);
+    color: var(--header-text-color);
 }
 
 nav ul {
@@ -159,11 +160,12 @@ nav ul li a::after {
 }
 
 nav ul li a:hover {
-    color: var(--primary-color);
+    color: var(--header-text-color);
 }
 
 nav ul li a:hover::after {
     width: 100%;
+    background-color: var(--header-text-color);
 }
 
 .mobile-menu-btn {
@@ -460,7 +462,7 @@ nav ul li a:hover::after {
 .service-icon {
     font-size: 3rem;
     margin-bottom: 1.5rem;
-    color: var(--primary-color);
+    color: var(--secondary-color);
     display: inline-block;
     transition: all 0.5s ease;
 }
@@ -473,7 +475,7 @@ nav ul li a:hover::after {
 .service-card h3 {
     font-size: 1.4rem;
     margin-bottom: 1rem;
-    color: var(--primary-color);
+    color: var(--secondary-color);
     position: relative;
     display: inline-block;
     transition: all 0.3s ease;
@@ -1043,7 +1045,7 @@ footer p {
 .about-content h3 {
     font-size: 2rem;
     margin-bottom: 1.5rem;
-    color: var(--primary-color);
+    color: var(--header-text-color);
     position: relative;
     padding-bottom: 0.8rem;
 }
