@@ -5,8 +5,8 @@
     --accent-color: #000000; /* Black */
     --text-color: #000000; /* Black text */
     --light-text: #333333; /* Dark gray for lighter text */
-    --bg-color: #fff;
-    --light-bg: #f8f9fa;
+    --bg-color: #FFF8E7; /* Light gold/cream background */
+    --light-bg: #FFF2D9; /* Slightly darker gold for sections */
     --border-radius: 8px;
     --box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
     --transition: all 0.3s ease;
