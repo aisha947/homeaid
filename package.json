@@ -1,0 +1,12 @@
+{
+  "name": "homeaid-website",
+  "version": "1.0.0",
+  "description": "HomeAid Services Website",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "dependencies": {
+    "mongodb": "^4.13.0"
+  }
+}
