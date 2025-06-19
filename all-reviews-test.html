@@ -1,0 +1,313 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Reviews Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .button {
+            background: #1976D2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .review-list {
+            margin: 20px 0;
+            max-height: 300px;
+            overflow-y: auto;
+            background: white;
+            padding: 15px;
+            border-radius: 8px;
+            border: 1px solid #ddd;
+        }
+        .review-item {
+            padding: 10px;
+            border-bottom: 1px solid #eee;
+        }
+        .review-item:last-child {
+            border-bottom: none;
+        }
+        .review-counter {
+            text-align: center;
+            margin: 10px 0;
+            font-size: 16px;
+            font-weight: bold;
+            color: #1976D2;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>All Reviews Test</h1>
+        <p>This page demonstrates all reviews being displayed in sequence.</p>
+        
+        <div class="test-section">
+            <h2>Controls</h2>
+            <button class="button" onclick="addMultipleReviews(3)">Add 3 Test Reviews</button>
+            <button class="button" onclick="addMultipleReviews(5)">Add 5 Test Reviews</button>
+            <button class="button" onclick="clearAllReviews()">Clear All Reviews</button>
+        </div>
+        
+        <div class="test-section">
+            <h2>All Reviews List</h2>
+            <div id="review-list" class="review-list">
+                <p>No reviews yet. Add some test reviews using the buttons above.</p>
+            </div>
+        </div>
+        
+        <div class="test-section">
+            <h2>Testimonials Slider</h2>
+            <p>All reviews should scroll in sequence with a counter showing which review is currently displayed.</p>
+            
+            <section id="testimonials" class="testimonials">
+                <div class="testimonial-container">
+                    <div class="testimonial-slider">
+                        <div class="testimonial-track">
+                            <!-- Initial review -->
+                            <div class="testimonial-slide">
+                                <div class="testimonial-content">
+                                    <div class="testimonial-text">
+                                        <p>Initial review - Add more reviews using the buttons above.</p>
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <div class="author-image">
+                                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                                        </div>
+                                        <div class="author-info">
+                                            <h4>Initial User</h4>
+                                            <p>Initial Service</p>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-controls">
+                        <button class="prev-testimonial"><i class="fas fa-arrow-circle-left"></i></button>
+                        <button class="next-testimonial"><i class="fas fa-arrow-circle-right"></i></button>
+                    </div>
+                    <div class="review-counter">Review 1 of 1</div>
+                </div>
+            </section>
+        </div>
+    </div>
+    
+    <script>
+        // Function to add a single review
+        function addReview(name, service, message, rating) {
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            if (!testimonialTrack) return;
+            
+            // Create star rating HTML
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                } else {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            // Create new slide
+            const newSlide = document.createElement('div');
+            newSlide.className = 'testimonial-slide';
+            newSlide.innerHTML = `
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>${message}</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-image">
+                            <img src="https://randomuser.me/api/portraits/lego/${Math.floor(Math.random() * 8) + 1}.jpg" alt="Patient">
+                        </div>
+                        <div class="author-info">
+                            <h4>${name}</h4>
+                            <p>${service}</p>
+                        </div>
+                        <div class="testimonial-rating">
+                            ${starsHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            // Add to track
+            testimonialTrack.appendChild(newSlide);
+            
+            // Update review list
+            updateReviewList();
+            
+            return newSlide;
+        }
+        
+        // Function to add multiple reviews
+        function addMultipleReviews(count) {
+            const services = ['IV Line', 'Nebulization', 'Wound Care', 'Post-Surgery Care', 'Home Visit'];
+            
+            for (let i = 0; i < count; i++) {
+                const name = `Test User ${Math.floor(Math.random() * 100)}`;
+                const service = services[Math.floor(Math.random() * services.length)];
+                const message = `This is test review #${i+1} added in a batch of ${count}. It should appear in sequence with all other reviews.`;
+                const rating = Math.floor(Math.random() * 5) + 1;
+                
+                addReview(name, service, message, rating);
+            }
+            
+            // Apply the fix to ensure all reviews display in sequence
+            applyAllReviewsFix();
+        }
+        
+        // Function to clear all reviews
+        function clearAllReviews() {
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            if (!testimonialTrack) return;
+            
+            // Keep only the first review
+            const firstReview = testimonialTrack.querySelector('.testimonial-slide');
+            testimonialTrack.innerHTML = '';
+            if (firstReview) {
+                testimonialTrack.appendChild(firstReview);
+            }
+            
+            // Update review list
+            updateReviewList();
+            
+            // Apply the fix
+            applyAllReviewsFix();
+        }
+        
+        // Function to update the review list
+        function updateReviewList() {
+            const reviewList = document.getElementById('review-list');
+            const slides = document.querySelectorAll('.testimonial-slide');
+            
+            if (slides.length === 0) {
+                reviewList.innerHTML = '<p>No reviews yet. Add some test reviews using the buttons above.</p>';
+                return;
+            }
+            
+            let html = '<h3>All Reviews:</h3><ol>';
+            slides.forEach((slide, index) => {
+                const name = slide.querySelector('.author-info h4')?.textContent || 'Unknown';
+                const service = slide.querySelector('.author-info p')?.textContent || 'Unknown';
+                const message = slide.querySelector('.testimonial-text p')?.textContent || 'No message';
+                
+                html += `
+                    <li class="review-item">
+                        <strong>${name}</strong> - ${service}<br>
+                        "${message.substring(0, 50)}${message.length > 50 ? '...' : ''}"
+                    </li>
+                `;
+            });
+            html += '</ol>';
+            
+            reviewList.innerHTML = html;
+        }
+        
+        // Function to apply the fix for all reviews
+        function applyAllReviewsFix() {
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            const testimonialSlider = document.querySelector('.testimonial-slider');
+            const slides = document.querySelectorAll('.testimonial-slide');
+            const prevBtn = document.querySelector('.prev-testimonial');
+            const nextBtn = document.querySelector('.next-testimonial');
+            const counter = document.querySelector('.review-counter');
+            
+            if (!testimonialTrack || !testimonialSlider || slides.length === 0) return;
+            
+            // Clear any existing intervals
+            if (window._reviewInterval) {
+                clearInterval(window._reviewInterval);
+            }
+            
+            // Set up variables
+            let currentIndex = 0;
+            const slideWidth = testimonialSlider.offsetWidth;
+            
+            // Set slide widths
+            slides.forEach(slide => {
+                slide.style.width = `${slideWidth}px`;
+            });
+            
+            // Set track width
+            testimonialTrack.style.width = `${slideWidth * slides.length}px`;
+            
+            // Function to go to a specific slide
+            function goToSlide(index) {
+                if (index < 0) index = slides.length - 1;
+                if (index >= slides.length) index = 0;
+                
+                currentIndex = index;
+                testimonialTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+                
+                // Update counter
+                if (counter) {
+                    counter.textContent = `Review ${currentIndex + 1} of ${slides.length}`;
+                }
+            }
+            
+            // Set up navigation
+            if (prevBtn) {
+                prevBtn.onclick = function() {
+                    goToSlide(currentIndex - 1);
+                };
+            }
+            
+            if (nextBtn) {
+                nextBtn.onclick = function() {
+                    goToSlide(currentIndex + 1);
+                };
+            }
+            
+            // Auto-scroll
+            window._reviewInterval = setInterval(function() {
+                goToSlide(currentIndex + 1);
+            }, 3000);
+            
+            // Pause on hover
+            testimonialSlider.addEventListener('mouseenter', function() {
+                clearInterval(window._reviewInterval);
+            });
+            
+            // Resume on mouse leave
+            testimonialSlider.addEventListener('mouseleave', function() {
+                window._reviewInterval = setInterval(function() {
+                    goToSlide(currentIndex + 1);
+                }, 3000);
+            });
+            
+            // Initial slide
+            goToSlide(0);
+        }
+        
+        // Initialize on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            updateReviewList();
+            applyAllReviewsFix();
+        });
+    </script>
+</body>
+</html>

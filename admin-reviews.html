@@ -1,0 +1,337 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin - Review Management</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .admin-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+        .review-item {
+            background: white;
+            padding: 15px;
+            margin: 10px 0;
+            border-radius: 4px;
+            border-left: 4px solid #1976D2;
+        }
+        .pending-review {
+            border-left: 4px solid #ff9800;
+        }
+        .button {
+            background: #1976D2;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin: 5px;
+        }
+        .danger {
+            background: #f44336;
+        }
+        .success {
+            background: #4caf50;
+        }
+        .warning {
+            background: #ff9800;
+        }
+        textarea {
+            width: 100%;
+            height: 300px;
+            font-family: monospace;
+            padding: 10px;
+            margin: 10px 0;
+        }
+        .instructions {
+            background: #e3f2fd;
+            padding: 15px;
+            border-radius: 4px;
+            margin: 10px 0;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Admin - Review Management</h1>
+        <p>This page helps you manage reviews for your website.</p>
+        
+        <div class="admin-section">
+            <h2>Instructions</h2>
+            <div class="instructions">
+                <h3>How to Add New Reviews:</h3>
+                <ol>
+                    <li>When users submit reviews on your site, they'll be shown temporarily but won't be permanent</li>
+                    <li>To make reviews permanent and visible to all visitors, you need to add them to your <code>reviews.json</code> file</li>
+                    <li>Use this admin tool to edit your JSON file</li>
+                    <li>After editing, copy the JSON and update your GitHub repository</li>
+                    <li>When you push to GitHub, Netlify will automatically deploy the updated reviews</li>
+                </ol>
+            </div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Pending Reviews</h2>
+            <p>These are reviews that have been submitted but not yet added to the JSON file.</p>
+            <button class="button warning" onclick="loadPendingReviews()">Check Pending Reviews</button>
+            <button class="button danger" onclick="clearPendingReviews()">Clear Pending Reviews</button>
+            <div id="pending-reviews"></div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Current Reviews</h2>
+            <button class="button" onclick="loadReviews()">Load Current Reviews</button>
+            <div id="current-reviews"></div>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Edit Reviews JSON</h2>
+            <p>Edit the JSON below, then copy it to update your reviews.json file in GitHub.</p>
+            <textarea id="json-editor"></textarea>
+            <button class="button" onclick="formatJSON()">Format JSON</button>
+            <button class="button success" onclick="copyJSON()">Copy JSON</button>
+        </div>
+        
+        <div class="admin-section">
+            <h2>Add New Review</h2>
+            <form id="admin-form">
+                <div style="margin-bottom: 10px;">
+                    <label>Name:</label>
+                    <input type="text" id="admin-name" required style="width: 100%; padding: 8px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label>Service:</label>
+                    <input type="text" id="admin-service" required style="width: 100%; padding: 8px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label>Message:</label>
+                    <textarea id="admin-message" required style="width: 100%; height: 100px; padding: 8px;"></textarea>
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <label>Rating (1-5):</label>
+                    <select id="admin-rating" required style="padding: 8px;">
+                        <option value="5">5 Stars</option>
+                        <option value="4">4 Stars</option>
+                        <option value="3">3 Stars</option>
+                        <option value="2">2 Stars</option>
+                        <option value="1">1 Star</option>
+                    </select>
+                </div>
+                <button type="submit" class="button success">Add to JSON</button>
+            </form>
+        </div>
+    </div>
+    
+    <script>
+        // Load reviews from JSON file
+        function loadReviews() {
+            fetch('reviews.json')
+                .then(response => response.json())
+                .then(data => {
+                    // Display in the editor
+                    document.getElementById('json-editor').value = JSON.stringify(data, null, 2);
+                    
+                    // Display current reviews
+                    const reviewsContainer = document.getElementById('current-reviews');
+                    reviewsContainer.innerHTML = '';
+                    
+                    if (data.reviews && data.reviews.length > 0) {
+                        reviewsContainer.innerHTML = `<h3>Found ${data.reviews.length} published reviews:</h3>`;
+                        
+                        data.reviews.forEach((review, index) => {
+                            const reviewElement = document.createElement('div');
+                            reviewElement.className = 'review-item';
+                            
+                            // Create star rating HTML
+                            let starsHTML = '';
+                            for (let i = 1; i <= 5; i++) {
+                                if (i <= review.rating) {
+                                    starsHTML += '★';
+                                } else {
+                                    starsHTML += '☆';
+                                }
+                            }
+                            
+                            reviewElement.innerHTML = `
+                                <h3>${review.name} - ${starsHTML}</h3>
+                                <p><strong>Service:</strong> ${review.service}</p>
+                                <p><strong>Date:</strong> ${review.date || 'Not specified'}</p>
+                                <p><em>"${review.message}"</em></p>
+                            `;
+                            
+                            reviewsContainer.appendChild(reviewElement);
+                        });
+                    } else {
+                        reviewsContainer.innerHTML = '<p>No reviews found.</p>';
+                    }
+                })
+                .catch(error => {
+                    console.error('Error loading reviews:', error);
+                    document.getElementById('current-reviews').innerHTML = '<p>Error loading reviews. Check console for details.</p>';
+                });
+        }
+        
+        // Load pending reviews from local storage
+        function loadPendingReviews() {
+            const pendingReviews = JSON.parse(localStorage.getItem('homeaid_pending_reviews') || '[]');
+            const pendingContainer = document.getElementById('pending-reviews');
+            
+            if (pendingReviews.length === 0) {
+                pendingContainer.innerHTML = '<p>No pending reviews found.</p>';
+                return;
+            }
+            
+            pendingContainer.innerHTML = `<h3>Found ${pendingReviews.length} pending reviews:</h3>`;
+            
+            pendingReviews.forEach((review, index) => {
+                const reviewElement = document.createElement('div');
+                reviewElement.className = 'review-item pending-review';
+                
+                // Create star rating HTML
+                let starsHTML = '';
+                for (let i = 1; i <= 5; i++) {
+                    if (i <= review.rating) {
+                        starsHTML += '★';
+                    } else {
+                        starsHTML += '☆';
+                    }
+                }
+                
+                reviewElement.innerHTML = `
+                    <h3>${review.name} - ${starsHTML}</h3>
+                    <p><strong>Service:</strong> ${review.service}</p>
+                    <p><strong>Date:</strong> ${review.date || 'Not specified'}</p>
+                    <p><em>"${review.message}"</em></p>
+                    <button class="button" onclick="addPendingReview(${index})">Add to JSON</button>
+                `;
+                
+                pendingContainer.appendChild(reviewElement);
+            });
+        }
+        
+        // Clear pending reviews
+        function clearPendingReviews() {
+            if (confirm('Are you sure you want to clear all pending reviews?')) {
+                localStorage.removeItem('homeaid_pending_reviews');
+                document.getElementById('pending-reviews').innerHTML = '<p>No pending reviews found.</p>';
+                alert('Pending reviews cleared.');
+            }
+        }
+        
+        // Add a pending review to the JSON
+        function addPendingReview(index) {
+            const pendingReviews = JSON.parse(localStorage.getItem('homeaid_pending_reviews') || '[]');
+            if (index >= 0 && index < pendingReviews.length) {
+                const review = pendingReviews[index];
+                
+                try {
+                    // Get current JSON
+                    const jsonText = document.getElementById('json-editor').value;
+                    let jsonData = JSON.parse(jsonText);
+                    
+                    // Add review
+                    if (!jsonData.reviews) {
+                        jsonData.reviews = [];
+                    }
+                    
+                    jsonData.reviews.push(review);
+                    
+                    // Update JSON editor
+                    document.getElementById('json-editor').value = JSON.stringify(jsonData, null, 2);
+                    
+                    // Remove from pending
+                    pendingReviews.splice(index, 1);
+                    localStorage.setItem('homeaid_pending_reviews', JSON.stringify(pendingReviews));
+                    
+                    // Reload pending reviews
+                    loadPendingReviews();
+                    
+                    alert('Review added to JSON! Remember to copy and update your GitHub repository.');
+                } catch (error) {
+                    alert('Error adding review: ' + error.message);
+                }
+            }
+        }
+        
+        // Format JSON in the editor
+        function formatJSON() {
+            try {
+                const jsonText = document.getElementById('json-editor').value;
+                const jsonData = JSON.parse(jsonText);
+                document.getElementById('json-editor').value = JSON.stringify(jsonData, null, 2);
+            } catch (error) {
+                alert('Invalid JSON: ' + error.message);
+            }
+        }
+        
+        // Copy JSON to clipboard
+        function copyJSON() {
+            const jsonEditor = document.getElementById('json-editor');
+            jsonEditor.select();
+            document.execCommand('copy');
+            alert('JSON copied to clipboard!');
+        }
+        
+        // Handle admin form submission
+        document.getElementById('admin-form').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // Get form data
+            const name = document.getElementById('admin-name').value;
+            const service = document.getElementById('admin-service').value;
+            const message = document.getElementById('admin-message').value;
+            const rating = parseInt(document.getElementById('admin-rating').value);
+            
+            // Create new review object
+            const newReview = {
+                name: name,
+                service: service,
+                message: message,
+                rating: rating,
+                date: new Date().toISOString().split('T')[0]
+            };
+            
+            try {
+                // Get current JSON
+                const jsonText = document.getElementById('json-editor').value;
+                let jsonData = JSON.parse(jsonText);
+                
+                // Add new review
+                if (!jsonData.reviews) {
+                    jsonData.reviews = [];
+                }
+                
+                jsonData.reviews.push(newReview);
+                
+                // Update JSON editor
+                document.getElementById('json-editor').value = JSON.stringify(jsonData, null, 2);
+                
+                // Reset form
+                this.reset();
+                
+                // Reload reviews
+                loadReviews();
+                
+                alert('Review added to JSON! Remember to copy and update your GitHub repository.');
+            } catch (error) {
+                alert('Error adding review: ' + error.message);
+            }
+        });
+        
+        // Load reviews on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            loadReviews();
+            loadPendingReviews();
+        });
+    </script>
+</body>
+</html>

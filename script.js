@@ -251,8 +251,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update slider on window resize
     window.addEventListener('resize', initSlider);
     
-    // Auto-advance slides every 3 seconds
-    let slideInterval = setInterval(nextSlide, 3000);
+    // Auto-advance slides every 10 seconds
+    let slideInterval = setInterval(nextSlide, 10000); // Changed from 3000 to 10000 (10 seconds)
     
     // Pause auto-advance when hovering over the slider
     testimonialSlider.addEventListener('mouseenter', () => {
@@ -261,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Resume auto-advance when mouse leaves the slider
     testimonialSlider.addEventListener('mouseleave', () => {
-        slideInterval = setInterval(nextSlide, 3000);
+        slideInterval = setInterval(nextSlide, 10000); // Changed from 3000 to 10000 (10 seconds)
     });
     
     // Function to add a new review to the testimonial slider
