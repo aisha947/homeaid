@@ -309,7 +309,8 @@
             <div class="review-modal-content">
                 <span class="close-modal">&times;</span>
                 <h3>Share Your Experience</h3>
-                <form id="reviewForm">
+                <form id="reviewForm" name="reviews" data-netlify="true" netlify>
+                    <input type="hidden" name="form-name" value="reviews" />
                     <div class="form-group">
                         <input type="text" id="reviewName" name="reviewName" placeholder="Your Name" required>
                     </div>

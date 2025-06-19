@@ -1,4 +1,4 @@
-// Simple Reviews System - Works across devices with Netlify Forms
+// Simple Reviews System - Works with Netlify Forms
 console.log('Simple reviews system loaded');
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -39,24 +39,12 @@ document.addEventListener('DOMContentLoaded', function() {
         const reviewForm = document.getElementById('reviewForm');
         
         if (reviewForm) {
-            // Remove any existing event listeners
-            const newForm = reviewForm.cloneNode(true);
-            reviewForm.parentNode.replaceChild(newForm, reviewForm);
-            
-            // Configure for Netlify Forms
-            newForm.setAttribute('data-netlify', 'true');
-            newForm.setAttribute('name', 'reviews');
-            
-            // Add hidden input for Netlify Forms
-            const hiddenInput = document.createElement('input');
-            hiddenInput.type = 'hidden';
-            hiddenInput.name = 'form-name';
-            hiddenInput.value = 'reviews';
-            newForm.prepend(hiddenInput);
+            console.log('Setting up review form - Netlify Forms version');
             
             // Handle form submission
-            newForm.addEventListener('submit', function(e) {
+            reviewForm.addEventListener('submit', function(e) {
                 e.preventDefault();
+                console.log('Form submitted - Netlify Forms handler');
                 
                 // Get form data
                 const name = document.getElementById('reviewName').value;
@@ -65,6 +53,8 @@ document.addEventListener('DOMContentLoaded', function() {
                 const rating = document.getElementById('reviewRating').value;
                 const message = document.getElementById('reviewMessage').value;
                 
+                console.log('Form data:', { name, email, service, rating, message });
+                
                 // Show loading state
                 const statusElement = document.getElementById('review-status');
                 statusElement.textContent = 'Submitting your review...';
@@ -72,26 +62,53 @@ document.addEventListener('DOMContentLoaded', function() {
                 
                 // Add to display immediately
                 if (window.addNewReview) {
+                    console.log('Adding review to display');
                     window.addNewReview(name, service, message, parseInt(rating));
                 }
                 
+                // Save to localStorage for persistence
+                try {
+                    const localReviews = JSON.parse(localStorage.getItem('homeaid_reviews') || '[]');
+                    localReviews.push({
+                        name: name,
+                        service: service,
+                        message: message,
+                        rating: parseInt(rating),
+                        date: new Date().toISOString().split('T')[0]
+                    });
+                    localStorage.setItem('homeaid_reviews', JSON.stringify(localReviews));
+                    console.log('Review saved to localStorage');
+                } catch (err) {
+                    console.error('Error saving to localStorage:', err);
+                }
+                
                 // Submit to Netlify Forms
-                const formData = new FormData(newForm);
+                const formData = new FormData(reviewForm);
+                
+                // Add the rating value explicitly
+                formData.append('rating', rating);
                 
                 fetch('/', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
                     body: new URLSearchParams(formData).toString()
                 })
+                .then(response => {
+                    console.log('Netlify Forms response:', response);
+                    if (!response.ok) {
+                        throw new Error('Network response was not ok: ' + response.statusText);
+                    }
+                    return response;
+                })
                 .then(() => {
-                    console.log('Form submitted to Netlify Forms');
+                    console.log('Form submitted to Netlify Forms successfully');
                     
                     // Show success message
                     statusElement.textContent = 'Thank you for your review! It has been added.';
                     statusElement.className = 'form-status success';
                     
                     // Reset form
-                    newForm.reset();
+                    reviewForm.reset();
                     
                     // Reset stars
                     const stars = document.querySelectorAll('.star-rating i');
@@ -118,8 +135,40 @@ document.addEventListener('DOMContentLoaded', function() {
                     // Still show success since we added the review to the display
                     statusElement.textContent = 'Your review has been added to the display.';
                     statusElement.className = 'form-status success';
+                    
+                    // Close modal after 3 seconds
+                    setTimeout(() => {
+                        const reviewModal = document.getElementById('reviewModal');
+                        if (reviewModal) {
+                            reviewModal.style.display = 'none';
+                            document.body.style.overflow = 'auto';
+                        }
+                        statusElement.className = 'form-status';
+                        statusElement.textContent = '';
+                    }, 3000);
                 });
             });
         }
+    }
+    
+    // Also load reviews from localStorage
+    try {
+        const localReviews = JSON.parse(localStorage.getItem('homeaid_reviews') || '[]');
+        if (localReviews.length > 0) {
+            console.log(`Loaded ${localReviews.length} reviews from localStorage`);
+            
+            localReviews.forEach(review => {
+                if (window.addNewReview) {
+                    window.addNewReview(
+                        review.name,
+                        review.service,
+                        review.message,
+                        review.rating
+                    );
+                }
+            });
+        }
+    } catch (err) {
+        console.error('Error loading from localStorage:', err);
     }
 });
