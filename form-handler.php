@@ -1,11 +1,22 @@
 <?php
+// Enable error reporting for debugging
+error_reporting(E_ALL);
+ini_set('display_errors', 1);
+
 // Check if the form is submitted
 if ($_SERVER["REQUEST_METHOD"] == "POST") {
-    // Get form data
-    $name = strip_tags(trim($_POST["name"]));
-    $email = filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL);
-    $phone = strip_tags(trim($_POST["phone"]));
-    $message = strip_tags(trim($_POST["message"]));
+    // Get form data and sanitize
+    $name = isset($_POST["name"]) ? strip_tags(trim($_POST["name"])) : '';
+    $email = isset($_POST["email"]) ? filter_var(trim($_POST["email"]), FILTER_SANITIZE_EMAIL) : '';
+    $phone = isset($_POST["phone"]) ? strip_tags(trim($_POST["phone"])) : '';
+    $message = isset($_POST["message"]) ? strip_tags(trim($_POST["message"])) : '';
+
+    // Validate required fields
+    if (empty($name) || empty($email) || empty($message)) {
+        http_response_code(400);
+        echo "Please fill in all required fields.";
+        exit;
+    }
 
     // Check if email is valid
     if (!filter_var($email, FILTER_VALIDATE_EMAIL)) {
@@ -14,50 +25,65 @@ if ($_SERVER["REQUEST_METHOD"] == "POST") {
         exit;
     }
 
-    // Set the recipient email address - this is where form submissions will be sent
+    // Set the recipient email address
     $recipient = "homeaidhomecareservices@gmail.com";
 
     // Set the email subject
-    $subject = "New Contact Request from HomeAid Website: $name";
+    $subject = "New Contact Request from HomeAid Website: " . $name;
 
-    // Build the email content
-    $email_content = "Name: $name\n";
-    $email_content .= "Email: $email\n";
-    $email_content .= "Phone: $phone\n\n";
-    $email_content .= "Message:\n$message\n";
+    // Build the email content with better formatting
+    $email_content = "You have received a new contact form submission from your HomeAid website.\n\n";
+    $email_content .= "Contact Details:\n";
+    $email_content .= "================\n";
+    $email_content .= "Name: " . $name . "\n";
+    $email_content .= "Email: " . $email . "\n";
+    $email_content .= "Phone: " . $phone . "\n\n";
+    $email_content .= "Message:\n";
+    $email_content .= "=========\n";
+    $email_content .= $message . "\n\n";
+    $email_content .= "Submitted on: " . date("Y-m-d H:i:s") . "\n";
+    $email_content .= "From IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
 
     // Log the submission
     $log_file = "contact_submissions.log";
     $log_message = date("Y-m-d H:i:s") . " - New contact from: $name ($email)\n";
     $log_message .= "Phone: $phone\n";
     $log_message .= "Message: $message\n";
+    $log_message .= "IP: " . $_SERVER['REMOTE_ADDR'] . "\n";
     $log_message .= "---------------------------------------------\n";
     
-    // Try to log the submission
-    file_put_contents($log_file, $log_message, FILE_APPEND);
+    // Log the submission
+    file_put_contents($log_file, $log_message, FILE_APPEND | LOCK_EX);
+    
+    // Set proper email headers
+    $headers = array();
+    $headers[] = "MIME-Version: 1.0";
+    $headers[] = "Content-type: text/plain; charset=UTF-8";
+    $headers[] = "From: HomeAid Website <noreply@homeaidservices.com>";
+    $headers[] = "Reply-To: " . $name . " <" . $email . ">";
+    $headers[] = "X-Mailer: PHP/" . phpversion();
+    
+    $email_headers = implode("\r\n", $headers);
     
     // Try to send email
-    $email_headers = "From: HomeAid Website <noreply@homeaidservices.com>\n";
-    $email_headers .= "Reply-To: $name <$email>";
-    
     $email_sent = false;
     
-    // Check if mail function exists and try to send
     if (function_exists('mail')) {
         $email_sent = mail($recipient, $subject, $email_content, $email_headers);
     }
     
-    // Set response based on email status
+    // Set response
     http_response_code(200);
     if ($email_sent) {
-        echo "Thank You! Your message has been sent to $recipient. We'll get back to you shortly.";
+        echo "Thank You! Your message has been sent successfully. We'll get back to you shortly.";
     } else {
-        echo "Thank You! Your message has been logged but could not be emailed (mail server not configured). We'll check our logs and get back to you.";
+        // For local development or servers without mail configured
+        echo "Thank You! Your message has been received and logged. We'll get back to you shortly.";
     }
     
 } else {
-    // Not a POST request, set a 403 (forbidden) response code
+    // Not a POST request
     http_response_code(403);
-    echo "There was a problem with your submission, please try again.";
+    echo "Invalid request method.";
 }
 ?>

@@ -10,6 +10,50 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
+    
+    <!-- TESTIMONIAL TEXT FIX - FORCE NORMAL TEXT WRAPPING -->
+    <style>
+        /* STRONGEST POSSIBLE CSS OVERRIDE */
+        .testimonials .testimonial-text p {
+            display: block !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            white-space: normal !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            -webkit-box-orient: initial !important;
+            -webkit-line-clamp: initial !important;
+            text-overflow: initial !important;
+            -webkit-box: initial !important;
+            flex: initial !important;
+            position: relative !important;
+        }
+        
+        .testimonials .testimonial-text p::after {
+            position: static !important;
+            background: none !important;
+            height: auto !important;
+            width: auto !important;
+            content: '"' !important;
+            font-size: 1.5rem !important;
+            color: #1976D2 !important;
+            font-family: Georgia, serif !important;
+        }
+        
+        .testimonials .testimonial-text {
+            display: block !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+        
+        /* Force normal text flow */
+        .testimonials .testimonial-slide,
+        .testimonials .testimonial-content,
+        .testimonials .testimonial-track {
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+    </style>
 </head>
 <body>
     <!-- Header Section -->
@@ -181,7 +225,7 @@
                         <div class="testimonial-slide">
                             <div class="testimonial-content">
                                 <div class="testimonial-text">
-                                    <p>"The home IV service was excellent. The nurse was professional, gentle, and made me feel comfortable throughout the procedure. I highly recommend HomeAid Services."</p>
+                                    <p>The home IV service was excellent. The nurse was professional, gentle, and made me feel comfortable throughout the procedure. I highly recommend HomeAid Services.</p>
                                 </div>
                                 <div class="testimonial-author">
                                     <div class="author-image">
@@ -191,20 +235,20 @@
                                         <h4>Ahmed Khan</h4>
                                         <p>IV Medication Patient</p>
                                     </div>
-                                </div>
-                                <div class="testimonial-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
+                                    <div class="testimonial-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="testimonial-slide">
                             <div class="testimonial-content">
                                 <div class="testimonial-text">
-                                    <p>"After my surgery, I was worried about wound care. HomeAid's post-operative care was a blessing. The regular visits and professional care helped me recover faster."</p>
+                                    <p>After my surgery, I was worried about wound care. HomeAid's post-operative care was a blessing. The regular visits and professional care helped me recover faster.</p>
                                 </div>
                                 <div class="testimonial-author">
                                     <div class="author-image">
@@ -214,20 +258,20 @@
                                         <h4>Fatima Zahra</h4>
                                         <p>Post-Surgery Patient</p>
                                     </div>
-                                </div>
-                                <div class="testimonial-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
+                                    <div class="testimonial-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                         <div class="testimonial-slide">
                             <div class="testimonial-content">
                                 <div class="testimonial-text">
-                                    <p>"When my father needed regular nebulization treatments, HomeAid made it so convenient. The staff was punctual, caring, and explained everything clearly. Thank you!"</p>
+                                    <p>When my father needed regular nebulization treatments, HomeAid made it so convenient. The staff was punctual, caring, and explained everything clearly. Thank you!</p>
                                 </div>
                                 <div class="testimonial-author">
                                     <div class="author-image">
@@ -237,26 +281,22 @@
                                         <h4>Usman Ali</h4>
                                         <p>Family of Nebulization Patient</p>
                                     </div>
-                                </div>
-                                <div class="testimonial-rating">
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star"></i>
-                                    <i class="fas fa-star-half-alt"></i>
+                                    <div class="testimonial-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
                 </div>
                 <div class="testimonial-controls">
-                    <button class="prev-testimonial"><i class="fas fa-chevron-left"></i></button>
-                    <div class="testimonial-dots">
-                        <span class="dot active" data-slide="0"></span>
-                        <span class="dot" data-slide="1"></span>
-                        <span class="dot" data-slide="2"></span>
-                    </div>
-                    <button class="next-testimonial"><i class="fas fa-chevron-right"></i></button>
+                    <button class="prev-testimonial"><i class="fas fa-arrow-circle-left"></i></button>
+                    <!-- Dots removed as requested -->
+                    <button class="next-testimonial"><i class="fas fa-arrow-circle-right"></i></button>
                 </div>
                 <div class="add-review-btn">
                     <button id="openReviewForm" class="review-btn">Share Your Experience</button>
@@ -384,6 +424,203 @@
             duration: 800,
             once: true
         });
+    </script>
+    
+    <!-- INLINE FORCE FIX FOR TESTIMONIALS -->
+    <script>
+        // FORCE FIX TESTIMONIAL TEXT IMMEDIATELY
+        function forceFixTestimonials() {
+            console.log('Forcing testimonial fix...');
+            const testimonialTexts = document.querySelectorAll('.testimonial-text p');
+            console.log('Found testimonials:', testimonialTexts.length);
+            
+            testimonialTexts.forEach((p, index) => {
+                // Apply styles directly with JavaScript
+                p.style.setProperty('display', 'block', 'important');
+                p.style.setProperty('word-wrap', 'break-word', 'important');
+                p.style.setProperty('overflow-wrap', 'break-word', 'important');
+                p.style.setProperty('white-space', 'normal', 'important');
+                p.style.setProperty('width', '100%', 'important');
+                p.style.setProperty('max-width', '100%', 'important');
+                p.style.setProperty('-webkit-box-orient', 'initial', 'important');
+                p.style.setProperty('-webkit-line-clamp', 'initial', 'important');
+                p.style.setProperty('text-overflow', 'initial', 'important');
+                
+                console.log(`Fixed testimonial ${index + 1}: "${p.textContent.substring(0, 30)}..."`);
+            });
+        }
+        
+        // Run immediately when DOM is ready
+        document.addEventListener('DOMContentLoaded', forceFixTestimonials);
+        
+        // Run again after everything loads
+        window.addEventListener('load', forceFixTestimonials);
+        
+        // Run after a delay to catch any dynamic content
+        setTimeout(forceFixTestimonials, 2000);
+        
+        // DEBUG: Check if review form is working
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== REVIEW FORM DEBUG ===');
+            const reviewForm = document.getElementById('reviewForm');
+            const openReviewBtn = document.getElementById('openReviewForm');
+            const reviewModal = document.getElementById('reviewModal');
+            
+            console.log('Review form found:', !!reviewForm);
+            console.log('Open review button found:', !!openReviewBtn);
+            console.log('Review modal found:', !!reviewModal);
+            
+            if (reviewForm) {
+                console.log('Adding debug event listener to form');
+                reviewForm.addEventListener('submit', function(e) {
+                    console.log('FORM SUBMITTED - DEBUG LISTENER');
+                    console.log('Event:', e);
+                });
+            }
+            
+            if (openReviewBtn) {
+                console.log('Adding debug event listener to open button');
+                openReviewBtn.addEventListener('click', function() {
+                    console.log('OPEN REVIEW BUTTON CLICKED');
+                });
+            }
+        });
+    </script>
+    
+    <!-- MAIN SCRIPT - ENABLE IT -->
+    <script src="script.js"></script>
+    
+    <!-- DEBUG SCRIPT TO FIX REVIEWS -->
+    <script src="debug-reviews.js"></script>
+    
+    <!-- BACKUP FORM HANDLER - STANDALONE VERSION -->
+    <script src="backup-form.js"></script>
+    
+    <!-- MINIMAL TESTIMONIAL FUNCTIONALITY -->
+    <script>
+        // Basic testimonial slider functionality
+        let currentIndex = 0;
+        let slides = [];
+        let dots = [];
+        let slideInterval;
+        
+        function initTestimonialSlider() {
+            const testimonialSlider = document.querySelector('.testimonial-slider');
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            slides = document.querySelectorAll('.testimonial-slide');
+            dots = document.querySelectorAll('.dot');
+            
+            if (!testimonialSlider || !testimonialTrack || slides.length === 0) return;
+            
+            let slideWidth = testimonialSlider.offsetWidth;
+            testimonialTrack.style.width = `${slideWidth * slides.length}px`;
+            
+            slides.forEach(slide => {
+                slide.style.width = `${slideWidth}px`;
+            });
+            
+            function goToSlide(index) {
+                currentIndex = index;
+                testimonialTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+                
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+            
+            function nextSlide() {
+                const newIndex = (currentIndex + 1) % slides.length;
+                goToSlide(newIndex);
+            }
+            
+            // Auto-advance every 3 seconds
+            slideInterval = setInterval(nextSlide, 3000);
+            
+            // Navigation buttons
+            const prevBtn = document.querySelector('.prev-testimonial');
+            const nextBtn = document.querySelector('.next-testimonial');
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    const newIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    goToSlide(newIndex);
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                });
+            }
+            
+            // Dot navigation
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+            });
+            
+            goToSlide(0);
+        }
+        
+        // Add new review function
+        window.addNewReview = function(name, service, message, rating) {
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            if (!testimonialTrack) return;
+            
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                } else {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            const newSlide = document.createElement('div');
+            newSlide.className = 'testimonial-slide';
+            newSlide.innerHTML = `
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>${message}</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-image">
+                            <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Patient">
+                        </div>
+                        <div class="author-info">
+                            <h4>${name}</h4>
+                            <p>${service} Patient</p>
+                        </div>
+                        <div class="testimonial-rating">
+                            ${starsHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            testimonialTrack.appendChild(newSlide);
+            
+            // Add new dot
+            const dotsContainer = document.querySelector('.testimonial-dots');
+            if (dotsContainer) {
+                const newDot = document.createElement('span');
+                newDot.className = 'dot';
+                newDot.setAttribute('data-slide', slides.length);
+                dotsContainer.appendChild(newDot);
+                
+                newDot.addEventListener('click', () => {
+                    goToSlide(slides.length);
+                });
+            }
+            
+            // Reinitialize slider
+            clearInterval(slideInterval);
+            initTestimonialSlider();
+        };
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', initTestimonialSlider);
     </script>
 </body>
 </html>

@@ -1,0 +1,175 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Debug Main Site Reviews</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .debug-info {
+            background: yellow;
+            padding: 10px;
+            margin: 10px 0;
+            border: 2px solid red;
+            font-family: monospace;
+            font-size: 12px;
+        }
+        
+        /* FORCE FIX - EXACT COPY FROM WORKING TEST PAGES */
+        .testimonial-text p {
+            display: block !important;
+            word-wrap: break-word !important;
+            overflow-wrap: break-word !important;
+            white-space: normal !important;
+            width: 100% !important;
+            max-width: 100% !important;
+            -webkit-box-orient: initial !important;
+            -webkit-line-clamp: initial !important;
+            text-overflow: initial !important;
+            font-size: 1rem !important;
+            line-height: 1.6 !important;
+            margin: 0 !important;
+            padding: 0 !important;
+        }
+    </style>
+</head>
+<body>
+    <div class="debug-info">
+        <h2>DEBUG: Main Site Reviews Structure</h2>
+        <p>This page uses the EXACT same structure as your main site but with forced CSS fixes.</p>
+    </div>
+    
+    <!-- EXACT COPY OF YOUR MAIN SITE TESTIMONIALS SECTION -->
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Patient Reviews</h2>
+            <div class="testimonial-container">
+                <div class="testimonial-slider">
+                    <div class="testimonial-track">
+                        <div class="testimonial-slide">
+                            <div class="testimonial-content">
+                                <div class="testimonial-text">
+                                    <p>The home IV service was excellent. The nurse was professional, gentle, and made me feel comfortable throughout the procedure. I highly recommend HomeAid Services.</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="author-image">
+                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                                    </div>
+                                    <div class="author-info">
+                                        <h4>Ahmed Khan</h4>
+                                        <p>IV Medication Patient</p>
+                                    </div>
+                                    <div class="testimonial-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-slide">
+                            <div class="testimonial-content">
+                                <div class="testimonial-text">
+                                    <p>After my surgery, I was worried about wound care. HomeAid's post-operative care was a blessing. The regular visits and professional care helped me recover faster.</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="author-image">
+                                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Patient">
+                                    </div>
+                                    <div class="author-info">
+                                        <h4>Fatima Zahra</h4>
+                                        <p>Post-Surgery Patient</p>
+                                    </div>
+                                    <div class="testimonial-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="testimonial-slide">
+                            <div class="testimonial-content">
+                                <div class="testimonial-text">
+                                    <p>When my father needed regular nebulization treatments, HomeAid made it so convenient. The staff was punctual, caring, and explained everything clearly. Thank you! This is a longer review to test how the text wrapping works with more content. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua.</p>
+                                </div>
+                                <div class="testimonial-author">
+                                    <div class="author-image">
+                                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Patient">
+                                    </div>
+                                    <div class="author-info">
+                                        <h4>Usman Ali</h4>
+                                        <p>Family of Nebulization Patient</p>
+                                    </div>
+                                    <div class="testimonial-rating">
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star"></i>
+                                        <i class="fas fa-star-half-alt"></i>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="testimonial-controls">
+                    <button class="prev-testimonial"><i class="fas fa-chevron-left"></i></button>
+                    <div class="testimonial-dots">
+                        <span class="dot active" data-slide="0"></span>
+                        <span class="dot" data-slide="1"></span>
+                        <span class="dot" data-slide="2"></span>
+                    </div>
+                    <button class="next-testimonial"><i class="fas fa-chevron-right"></i></button>
+                </div>
+                <div class="add-review-btn">
+                    <button id="openReviewForm" class="review-btn">Share Your Experience</button>
+                </div>
+            </div>
+        </div>
+    </section>
+    
+    <div class="debug-info">
+        <h3>Debug Information:</h3>
+        <div id="debug-output"></div>
+        <button onclick="analyzeTestimonials()">Analyze Testimonials</button>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        function analyzeTestimonials() {
+            const output = document.getElementById('debug-output');
+            const testimonials = document.querySelectorAll('.testimonial-text p');
+            
+            let html = '<h4>Found ' + testimonials.length + ' testimonials:</h4>';
+            
+            testimonials.forEach((p, index) => {
+                const styles = getComputedStyle(p);
+                html += '<div style="border: 1px solid #ccc; margin: 5px 0; padding: 5px;">';
+                html += '<strong>Testimonial ' + (index + 1) + ':</strong><br>';
+                html += '<strong>Text:</strong> "' + p.textContent.substring(0, 50) + '..."<br>';
+                html += '<strong>Display:</strong> ' + styles.display + '<br>';
+                html += '<strong>White-space:</strong> ' + styles.whiteSpace + '<br>';
+                html += '<strong>Word-wrap:</strong> ' + styles.wordWrap + '<br>';
+                html += '<strong>Width:</strong> ' + styles.width + '<br>';
+                html += '<strong>Max-width:</strong> ' + styles.maxWidth + '<br>';
+                html += '<strong>-webkit-line-clamp:</strong> ' + styles.webkitLineClamp + '<br>';
+                html += '<strong>-webkit-box-orient:</strong> ' + styles.webkitBoxOrient + '<br>';
+                html += '</div>';
+            });
+            
+            output.innerHTML = html;
+        }
+        
+        // Auto-analyze when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(analyzeTestimonials, 1000);
+        });
+    </script>
+</body>
+</html>

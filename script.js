@@ -9,6 +9,9 @@ document.addEventListener('DOMContentLoaded', function() {
         offset: 50
     });
 
+    // Load existing reviews on page load
+    loadExistingReviews();
+
     // Mobile menu toggle
     const mobileMenuBtn = document.querySelector('.mobile-menu-btn');
     const nav = document.querySelector('nav');
@@ -177,8 +180,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Testimonial slider - Completely rewritten
     const testimonialSlider = document.querySelector('.testimonial-slider');
     const testimonialTrack = document.querySelector('.testimonial-track');
-    const slides = document.querySelectorAll('.testimonial-slide');
-    const dots = document.querySelectorAll('.dot');
+    let slides = document.querySelectorAll('.testimonial-slide');
+    let dots = document.querySelectorAll('.dot');
     const prevBtn = document.querySelector('.prev-testimonial');
     const nextBtn = document.querySelector('.next-testimonial');
     let currentIndex = 0;
@@ -211,10 +214,12 @@ document.addEventListener('DOMContentLoaded', function() {
         // Move the track to show the current slide
         testimonialTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
         
-        // Update dots
-        dots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === currentIndex);
-        });
+        // Update dots if they exist
+        if (dots && dots.length > 0) {
+            dots.forEach((dot, i) => {
+                dot.classList.toggle('active', i === currentIndex);
+            });
+        }
     }
     
     // Function to go to the next slide
@@ -246,8 +251,8 @@ document.addEventListener('DOMContentLoaded', function() {
     // Update slider on window resize
     window.addEventListener('resize', initSlider);
     
-    // Auto-advance slides every 5 seconds
-    let slideInterval = setInterval(nextSlide, 5000);
+    // Auto-advance slides every 3 seconds
+    let slideInterval = setInterval(nextSlide, 3000);
     
     // Pause auto-advance when hovering over the slider
     testimonialSlider.addEventListener('mouseenter', () => {
@@ -256,7 +261,7 @@ document.addEventListener('DOMContentLoaded', function() {
     
     // Resume auto-advance when mouse leaves the slider
     testimonialSlider.addEventListener('mouseleave', () => {
-        slideInterval = setInterval(nextSlide, 5000);
+        slideInterval = setInterval(nextSlide, 3000);
     });
     
     // Function to add a new review to the testimonial slider
@@ -281,7 +286,7 @@ document.addEventListener('DOMContentLoaded', function() {
         newSlide.innerHTML = `
             <div class="testimonial-content">
                 <div class="testimonial-text">
-                    <p>"${message}"</p>
+                    <p>${message}</p>
                 </div>
                 <div class="testimonial-author">
                     <div class="author-image">
@@ -291,9 +296,9 @@ document.addEventListener('DOMContentLoaded', function() {
                         <h4>${name}</h4>
                         <p>${service} Patient</p>
                     </div>
-                </div>
-                <div class="testimonial-rating">
-                    ${starsHTML}
+                    <div class="testimonial-rating">
+                        ${starsHTML}
+                    </div>
                 </div>
             </div>
         `;
@@ -301,23 +306,31 @@ document.addEventListener('DOMContentLoaded', function() {
         // Add the new slide to the track
         testimonialTrack.appendChild(newSlide);
         
-        // Add a new dot
+        // Update the slides array to include the new slide
+        slides = document.querySelectorAll('.testimonial-slide');
+        
+        // Add a new dot if dots container exists
         const dotsContainer = document.querySelector('.testimonial-dots');
-        const newDot = document.createElement('span');
-        newDot.className = 'dot';
-        newDot.setAttribute('data-slide', slides.length);
-        dotsContainer.appendChild(newDot);
+        if (dotsContainer) {
+            const newDot = document.createElement('span');
+            newDot.className = 'dot';
+            newDot.setAttribute('data-slide', slides.length - 1);
+            dotsContainer.appendChild(newDot);
+            
+            // Add event listener to the new dot
+            newDot.addEventListener('click', () => {
+                goToSlide(slides.length - 1);
+            });
+            
+            // Update dots array
+            dots = document.querySelectorAll('.dot');
+        }
         
-        // Add event listener to the new dot
-        newDot.addEventListener('click', () => {
-            goToSlide(slides.length);
-        });
-        
-        // Update the slider
+        // Update the slider to include the new review
         initSlider();
         
-        // Go to the new slide
-        goToSlide(slides.length);
+        // Don't jump to the new slide immediately - let it appear in natural sequence
+        // The auto-advance will eventually show it
     };
 
     // Review modal functionality
@@ -374,7 +387,7 @@ document.addEventListener('DOMContentLoaded', function() {
     const reviewForm = document.getElementById('reviewForm');
     
     if (reviewForm) {
-        reviewForm.addEventListener('submit', function(e) {
+        reviewForm.addEventListener('submit', async function(e) {
             e.preventDefault();
             
             // Get form data
@@ -391,31 +404,119 @@ document.addEventListener('DOMContentLoaded', function() {
                 return;
             }
             
-            // Add the new review to the testimonial slider
-            window.addNewReview(name, service, message, rating);
+            // Show loading state
+            document.getElementById('review-status').textContent = 'Submitting your review...';
+            document.getElementById('review-status').className = 'form-status';
             
-            // Show success message
-            document.getElementById('review-status').textContent = 'Thank you for your review! It has been added.';
-            document.getElementById('review-status').className = 'form-status success';
-            
-            // Reset form
-            reviewForm.reset();
-            
-            // Reset stars
-            stars.forEach(s => {
-                s.classList.remove('fas');
-                s.classList.add('far');
-            });
-            
-            // Close modal after 3 seconds
-            setTimeout(() => {
-                reviewModal.style.display = 'none';
-                document.body.style.overflow = 'auto';
-                document.getElementById('review-status').className = 'form-status';
-            }, 3000);
+            try {
+                // Try to submit to PHP backend first
+                let backendSuccess = false;
+                
+                try {
+                    const response = await fetch('review-handler.php', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                        },
+                        body: JSON.stringify({
+                            name: name,
+                            email: email,
+                            service: service,
+                            rating: parseInt(rating),
+                            message: message
+                        })
+                    });
+                    
+                    if (response.ok) {
+                        const result = await response.json();
+                        if (result.success) {
+                            backendSuccess = true;
+                        }
+                    }
+                } catch (backendError) {
+                    console.log('Backend not available, using local storage:', backendError.message);
+                    // Backend not available, continue with local storage
+                }
+                
+                // Add the new review to the testimonial slider (works locally)
+                window.addNewReview(name, service, message, rating);
+                
+                // Show success message
+                if (backendSuccess) {
+                    document.getElementById('review-status').textContent = 'Thank you for your review! It has been saved and added to the display.';
+                } else {
+                    document.getElementById('review-status').textContent = 'Thank you for your review! It has been added to the display.';
+                }
+                document.getElementById('review-status').className = 'form-status success';
+                
+                // Reset form
+                reviewForm.reset();
+                
+                // Reset stars
+                stars.forEach(s => {
+                    s.classList.remove('fas');
+                    s.classList.add('far');
+                });
+                
+                // Close modal after 3 seconds
+                setTimeout(() => {
+                    reviewModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    document.getElementById('review-status').className = 'form-status';
+                }, 3000);
+                
+            } catch (error) {
+                console.error('Error submitting review:', error);
+                
+                // Even if there's an error, still add the review locally
+                window.addNewReview(name, service, message, rating);
+                
+                document.getElementById('review-status').textContent = 'Your review has been added to the display (local mode).';
+                document.getElementById('review-status').className = 'form-status success';
+                
+                // Reset form
+                reviewForm.reset();
+                
+                // Reset stars
+                stars.forEach(s => {
+                    s.classList.remove('fas');
+                    s.classList.add('far');
+                });
+                
+                // Close modal after 3 seconds
+                setTimeout(() => {
+                    reviewModal.style.display = 'none';
+                    document.body.style.overflow = 'auto';
+                    document.getElementById('review-status').className = 'form-status';
+                }, 3000);
+            }
         });
     }
 });
+
+// Function to load existing reviews from the server
+async function loadExistingReviews() {
+    try {
+        const response = await fetch('review-handler.php');
+        if (response.ok) {
+            const data = await response.json();
+            if (data.reviews && data.reviews.length > 0) {
+                // Clear existing testimonials (except the default ones if you want to keep them)
+                const testimonialTrack = document.querySelector('.testimonial-track');
+                if (testimonialTrack) {
+                    // You can choose to keep existing testimonials or replace them
+                    // For now, let's add new reviews to existing ones
+                    data.reviews.forEach(review => {
+                        addNewReview(review.name, review.service, review.message, review.rating);
+                    });
+                }
+            }
+        }
+    } catch (error) {
+        console.log('Backend not available for loading reviews, using default reviews:', error.message);
+        // Backend not available, just use the default reviews in HTML
+    }
+}
 
 // Form status handling
 function showFormStatus(type, message) {

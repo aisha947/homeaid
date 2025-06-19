@@ -1,0 +1,187 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Diagnose Submit Button</title>
+    <link rel="stylesheet" href="styles.css">
+    <style>
+        .debug-box {
+            background: #f0f0f0;
+            border: 2px solid #333;
+            padding: 15px;
+            margin: 10px 0;
+            font-family: monospace;
+        }
+        .error { background: #ffebee; border-color: #f44336; }
+        .success { background: #e8f5e8; border-color: #4caf50; }
+        .info { background: #e3f2fd; border-color: #2196f3; }
+    </style>
+</head>
+<body>
+    <div style="padding: 20px;">
+        <h1>Submit Button Diagnosis</h1>
+        
+        <div id="diagnosis-results"></div>
+        
+        <button onclick="runDiagnosis()" style="background: #2196f3; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 0;">Run Diagnosis</button>
+        
+        <button onclick="testSimpleForm()" style="background: #4caf50; color: white; padding: 10px 20px; border: none; border-radius: 4px; cursor: pointer; margin: 10px 0;">Test Simple Form</button>
+        
+        <!-- Copy of your exact review modal structure -->
+        <div id="reviewModal" class="review-modal" style="display: block; position: relative; background: white; padding: 20px; margin: 20px 0; border: 1px solid #ccc;">
+            <div class="review-modal-content">
+                <h3>Test Review Form</h3>
+                <form id="reviewForm">
+                    <div class="form-group">
+                        <input type="text" id="reviewName" name="reviewName" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="reviewEmail" name="reviewEmail" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="reviewService" name="reviewService" required>
+                            <option value="" disabled selected>Select Service Used</option>
+                            <option value="IV Line">IV Line</option>
+                            <option value="Nebulization">Nebulization</option>
+                            <option value="Wound Care">Wound Care</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <div class="rating-select">
+                            <p>Rate your experience:</p>
+                            <div class="star-rating">
+                                <i class="far fa-star" data-rating="1"></i>
+                                <i class="far fa-star" data-rating="2"></i>
+                                <i class="far fa-star" data-rating="3"></i>
+                                <i class="far fa-star" data-rating="4"></i>
+                                <i class="far fa-star" data-rating="5"></i>
+                                <input type="hidden" id="reviewRating" name="reviewRating" value="0">
+                            </div>
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="reviewMessage" name="reviewMessage" placeholder="Share your experience" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn" id="submitBtn">Submit Review</button>
+                </form>
+                <div id="review-status" class="form-status"></div>
+            </div>
+        </div>
+        
+        <!-- Simple test form -->
+        <div style="background: #f9f9f9; padding: 20px; margin: 20px 0; border: 1px solid #ddd;">
+            <h3>Simple Test Form</h3>
+            <form id="simpleForm">
+                <input type="text" placeholder="Name" required style="display: block; margin: 5px 0; padding: 8px; width: 200px;">
+                <button type="submit" style="background: #ff5722; color: white; padding: 10px 15px; border: none; cursor: pointer;">Simple Submit</button>
+            </form>
+            <div id="simple-result"></div>
+        </div>
+    </div>
+    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    
+    <script>
+        function addResult(message, type = 'info') {
+            const results = document.getElementById('diagnosis-results');
+            const div = document.createElement('div');
+            div.className = `debug-box ${type}`;
+            div.innerHTML = message;
+            results.appendChild(div);
+        }
+        
+        function runDiagnosis() {
+            document.getElementById('diagnosis-results').innerHTML = '';
+            addResult('Starting diagnosis...', 'info');
+            
+            // Check if elements exist
+            const elements = {
+                reviewForm: document.getElementById('reviewForm'),
+                submitBtn: document.getElementById('submitBtn'),
+                reviewName: document.getElementById('reviewName'),
+                reviewEmail: document.getElementById('reviewEmail'),
+                reviewService: document.getElementById('reviewService'),
+                reviewRating: document.getElementById('reviewRating'),
+                reviewMessage: document.getElementById('reviewMessage'),
+                reviewStatus: document.getElementById('review-status'),
+                stars: document.querySelectorAll('.star-rating i')
+            };
+            
+            // Check each element
+            Object.keys(elements).forEach(key => {
+                if (elements[key] && (elements[key].length !== undefined ? elements[key].length > 0 : true)) {
+                    addResult(`✓ ${key}: Found`, 'success');
+                } else {
+                    addResult(`✗ ${key}: NOT FOUND`, 'error');
+                }
+            });
+            
+            // Check if form has event listeners
+            const form = elements.reviewForm;
+            if (form) {
+                addResult('Testing form submission...', 'info');
+                
+                // Add a test event listener
+                const testHandler = function(e) {
+                    e.preventDefault();
+                    addResult('✓ Form submission event fired!', 'success');
+                    addResult('Form data: ' + JSON.stringify({
+                        name: elements.reviewName.value,
+                        email: elements.reviewEmail.value,
+                        service: elements.reviewService.value,
+                        rating: elements.reviewRating.value,
+                        message: elements.reviewMessage.value
+                    }), 'info');
+                };
+                
+                form.addEventListener('submit', testHandler);
+                addResult('Test event listener added. Try submitting the form above.', 'info');
+            }
+            
+            // Test star rating
+            if (elements.stars.length > 0) {
+                addResult('Testing star rating...', 'info');
+                elements.stars.forEach((star, index) => {
+                    star.addEventListener('click', function() {
+                        const rating = this.getAttribute('data-rating');
+                        elements.reviewRating.value = rating;
+                        addResult(`Star ${rating} clicked, rating set to: ${rating}`, 'success');
+                        
+                        // Update star appearance
+                        elements.stars.forEach(s => {
+                            const sRating = s.getAttribute('data-rating');
+                            if (sRating <= rating) {
+                                s.classList.remove('far');
+                                s.classList.add('fas');
+                            } else {
+                                s.classList.remove('fas');
+                                s.classList.add('far');
+                            }
+                        });
+                    });
+                });
+                addResult('Star rating event listeners added. Try clicking stars above.', 'info');
+            }
+        }
+        
+        function testSimpleForm() {
+            const simpleForm = document.getElementById('simpleForm');
+            const simpleResult = document.getElementById('simple-result');
+            
+            if (simpleForm) {
+                simpleForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    simpleResult.innerHTML = '<div style="color: green; font-weight: bold;">✓ Simple form works!</div>';
+                });
+                simpleResult.innerHTML = '<div style="color: blue;">Simple form handler added. Try submitting it.</div>';
+            }
+        }
+        
+        // Auto-run diagnosis when page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            setTimeout(runDiagnosis, 1000);
+        });
+    </script>
+</body>
+</html>

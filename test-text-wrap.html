@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Text Wrap Test</title>
+    <style>
+        .test-container {
+            width: 300px;
+            border: 2px solid red;
+            margin: 20px;
+            padding: 20px;
+        }
+        
+        .test-text {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #333;
+            font-style: italic;
+            margin: 0;
+            word-wrap: break-word;
+            word-break: break-word;
+            white-space: normal;
+            overflow-wrap: break-word;
+            hyphens: auto;
+            display: -webkit-box;
+            -webkit-line-clamp: 6;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+        
+        .test-text-simple {
+            font-size: 1rem;
+            line-height: 1.6;
+            color: #333;
+            word-wrap: break-word;
+            margin: 0;
+        }
+    </style>
+</head>
+<body>
+    <h1>Text Wrapping Test</h1>
+    
+    <div class="test-container">
+        <h3>With line-clamp (should wrap and truncate):</h3>
+        <p class="test-text">This is a very long text that should wrap to multiple lines and then be truncated after 6 lines. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+    </div>
+    
+    <div class="test-container">
+        <h3>Simple text (should wrap normally):</h3>
+        <p class="test-text-simple">This is a very long text that should wrap to multiple lines normally without truncation. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat.</p>
+    </div>
+    
+    <div class="test-container">
+        <h3>Your testimonial CSS:</h3>
+        <div style="
+            flex-grow: 1;
+            margin-bottom: 1.5rem;
+            overflow: hidden;
+            display: flex;
+            align-items: flex-start;
+            width: 100%;
+            max-width: 100%;
+        ">
+            <p style="
+                font-size: 1rem;
+                line-height: 1.6;
+                color: #333;
+                font-style: italic;
+                position: relative;
+                margin: 0;
+                word-wrap: break-word;
+                word-break: break-word;
+                white-space: normal;
+                overflow-wrap: break-word;
+                hyphens: auto;
+                display: -webkit-box;
+                -webkit-line-clamp: 6;
+                -webkit-box-orient: vertical;
+                overflow: hidden;
+                text-overflow: ellipsis;
+            ">This is a very long text that should wrap to multiple lines and then be truncated after 6 lines using your exact testimonial CSS. Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur.</p>
+        </div>
+    </div>
+</body>
+</html>

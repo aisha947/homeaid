@@ -1,0 +1,156 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Arrow Navigation Test</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+    <style>
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        .test-section {
+            background: #f5f5f5;
+            padding: 20px;
+            margin: 20px 0;
+            border-radius: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Arrow Navigation Test</h1>
+        <p>This page tests the arrow navigation for testimonials without dots.</p>
+        
+        <div class="test-section">
+            <h2>Testimonials with Arrow Navigation</h2>
+            
+            <section id="testimonials" class="testimonials">
+                <div class="testimonial-container">
+                    <div class="testimonial-slider">
+                        <div class="testimonial-track">
+                            <div class="testimonial-slide">
+                                <div class="testimonial-content">
+                                    <div class="testimonial-text">
+                                        <p>First review - You should see large arrow icons on both sides.</p>
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <div class="author-image">
+                                            <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
+                                        </div>
+                                        <div class="author-info">
+                                            <h4>First User</h4>
+                                            <p>Test Service</p>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial-slide">
+                                <div class="testimonial-content">
+                                    <div class="testimonial-text">
+                                        <p>Second review - The arrows should be large and blue.</p>
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <div class="author-image">
+                                            <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Patient">
+                                        </div>
+                                        <div class="author-info">
+                                            <h4>Second User</h4>
+                                            <p>Test Service</p>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="far fa-star"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="testimonial-slide">
+                                <div class="testimonial-content">
+                                    <div class="testimonial-text">
+                                        <p>Third review - The dots should be completely hidden.</p>
+                                    </div>
+                                    <div class="testimonial-author">
+                                        <div class="author-image">
+                                            <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Patient">
+                                        </div>
+                                        <div class="author-info">
+                                            <h4>Third User</h4>
+                                            <p>Test Service</p>
+                                        </div>
+                                        <div class="testimonial-rating">
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star"></i>
+                                            <i class="fas fa-star-half-alt"></i>
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="testimonial-controls">
+                        <button class="prev-testimonial"><i class="fas fa-arrow-circle-left"></i></button>
+                        <!-- Dots removed as requested -->
+                        <button class="next-testimonial"><i class="fas fa-arrow-circle-right"></i></button>
+                    </div>
+                </div>
+            </section>
+        </div>
+        
+        <div class="test-section">
+            <h2>Add Test Review</h2>
+            <form id="testForm">
+                <div style="margin-bottom: 10px;">
+                    <input type="text" id="testName" placeholder="Name" required style="padding: 8px; width: 300px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <input type="text" id="testService" placeholder="Service" required style="padding: 8px; width: 300px;">
+                </div>
+                <div style="margin-bottom: 10px;">
+                    <textarea id="testMessage" placeholder="Review message" required style="padding: 8px; width: 300px; height: 100px;"></textarea>
+                </div>
+                <button type="submit" style="background: #1976D2; color: white; border: none; padding: 10px 20px; cursor: pointer;">Add Review</button>
+            </form>
+        </div>
+    </div>
+    
+    <script src="script.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const testForm = document.getElementById('testForm');
+            if (testForm) {
+                testForm.addEventListener('submit', function(e) {
+                    e.preventDefault();
+                    
+                    const name = document.getElementById('testName').value;
+                    const service = document.getElementById('testService').value;
+                    const message = document.getElementById('testMessage').value;
+                    
+                    if (window.addNewReview) {
+                        window.addNewReview(name, service, message, 5);
+                        alert('Review added successfully!');
+                        testForm.reset();
+                    } else {
+                        alert('Error: addNewReview function not available');
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>
