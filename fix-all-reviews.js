@@ -27,15 +27,24 @@ document.addEventListener('DOMContentLoaded', function() {
         
         // Set up variables for navigation
         let currentIndex = 0;
-        const slideWidth = testimonialSlider.offsetWidth;
         
-        // Make sure all slides have the correct width
-        slides.forEach(slide => {
-            slide.style.width = `${slideWidth}px`;
-        });
+        // Function to update slide widths and track width
+        function updateSlideWidths() {
+            const slideWidth = testimonialSlider.offsetWidth;
+            
+            // Make sure all slides have the correct width
+            slides.forEach(slide => {
+                slide.style.width = `${slideWidth}px`;
+            });
+            
+            // Set the track width to accommodate all slides
+            testimonialTrack.style.width = `${slideWidth * slides.length}px`;
+            
+            return slideWidth;
+        }
         
-        // Set the track width to accommodate all slides
-        testimonialTrack.style.width = `${slideWidth * slides.length}px`;
+        // Initial update
+        let slideWidth = updateSlideWidths();
         
         // Function to go to a specific slide
         function goToSlide(index) {
@@ -44,21 +53,34 @@ document.addEventListener('DOMContentLoaded', function() {
             if (index >= slides.length) index = 0;
             
             currentIndex = index;
+            
+            // Update slide widths in case of window resize
+            slideWidth = updateSlideWidths();
+            
+            // Move the track to show the current slide
             testimonialTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
             
             // Log which review is currently showing
             console.log(`Showing review ${currentIndex + 1} of ${slides.length}`);
+            
+            // Update counter if it exists
+            const counter = document.querySelector('.review-counter');
+            if (counter) {
+                counter.innerHTML = `Review ${currentIndex + 1} of ${slides.length}`;
+            }
         }
         
         // Set up click handlers for navigation buttons
         if (prevBtn) {
-            prevBtn.onclick = function() {
+            prevBtn.onclick = function(e) {
+                e.preventDefault();
                 goToSlide(currentIndex - 1);
             };
         }
         
         if (nextBtn) {
-            nextBtn.onclick = function() {
+            nextBtn.onclick = function(e) {
+                e.preventDefault();
                 goToSlide(currentIndex + 1);
             };
         }
@@ -66,7 +88,7 @@ document.addEventListener('DOMContentLoaded', function() {
         // Start auto-scrolling through ALL reviews
         window._reviewInterval = setInterval(function() {
             goToSlide(currentIndex + 1);
-        }, 10000); // Changed from 3000 to 10000 (10 seconds)
+        }, 10000); // 10 seconds
         
         // Pause on hover
         testimonialSlider.addEventListener('mouseenter', function() {
@@ -77,43 +99,42 @@ document.addEventListener('DOMContentLoaded', function() {
         testimonialSlider.addEventListener('mouseleave', function() {
             window._reviewInterval = setInterval(function() {
                 goToSlide(currentIndex + 1);
-            }, 10000); // Changed from 3000 to 10000 (10 seconds)
+            }, 10000); // 10 seconds
         });
         
         // Add a counter to show which review is currently displayed
         const container = document.querySelector('.testimonial-container');
         if (container) {
-            const counter = document.createElement('div');
-            counter.className = 'review-counter';
-            counter.style.textAlign = 'center';
-            counter.style.margin = '10px 0';
-            counter.style.fontSize = '14px';
-            counter.style.color = '#666';
-            counter.innerHTML = `Review 1 of ${slides.length}`;
+            // Check if counter already exists
+            let counter = document.querySelector('.review-counter');
             
-            // Insert after the controls
-            const controls = document.querySelector('.testimonial-controls');
-            if (controls && controls.nextSibling) {
-                container.insertBefore(counter, controls.nextSibling);
+            if (!counter) {
+                counter = document.createElement('div');
+                counter.className = 'review-counter';
+                counter.style.textAlign = 'center';
+                counter.style.margin = '10px 0';
+                counter.style.fontSize = '14px';
+                counter.style.color = '#666';
+                counter.innerHTML = `Review 1 of ${slides.length}`;
+                
+                // Insert after the controls
+                const controls = document.querySelector('.testimonial-controls');
+                if (controls && controls.nextSibling) {
+                    container.insertBefore(counter, controls.nextSibling);
+                } else {
+                    container.appendChild(counter);
+                }
             } else {
-                container.appendChild(counter);
+                counter.innerHTML = `Review 1 of ${slides.length}`;
             }
-            
-            // Update counter when changing slides
-            const updateCounter = function() {
-                counter.innerHTML = `Review ${currentIndex + 1} of ${slides.length}`;
-            };
-            
-            // Override goToSlide to update counter
-            const originalGoToSlide = goToSlide;
-            goToSlide = function(index) {
-                originalGoToSlide(index);
-                updateCounter();
-            };
-            
-            // Initial update
-            updateCounter();
         }
+        
+        // Handle window resize
+        window.addEventListener('resize', function() {
+            // Update slide widths and reposition to current slide
+            slideWidth = updateSlideWidths();
+            testimonialTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+        });
         
         // Go to first slide to start
         goToSlide(0);
