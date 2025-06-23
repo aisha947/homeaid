@@ -5,56 +5,12 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>HomeAid Services - Trusted Medical Services at Your Home</title>
     <link rel="stylesheet" href="styles.css">
-    <link rel="stylesheet" href="reviews-ui.css">
+    <link rel="stylesheet" href="clean-reviews.css">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
     <link rel="stylesheet" href="https://unpkg.com/aos@next/dist/aos.css" />
-    
-    <!-- TESTIMONIAL TEXT FIX - FORCE NORMAL TEXT WRAPPING -->
-    <style>
-        /* STRONGEST POSSIBLE CSS OVERRIDE */
-        .testimonials .testimonial-text p {
-            display: block !important;
-            word-wrap: break-word !important;
-            overflow-wrap: break-word !important;
-            white-space: normal !important;
-            width: 100% !important;
-            max-width: 100% !important;
-            -webkit-box-orient: initial !important;
-            -webkit-line-clamp: initial !important;
-            text-overflow: initial !important;
-            -webkit-box: initial !important;
-            flex: initial !important;
-            position: relative !important;
-        }
-        
-        .testimonials .testimonial-text p::after {
-            position: static !important;
-            background: none !important;
-            height: auto !important;
-            width: auto !important;
-            content: '"' !important;
-            font-size: 1.5rem !important;
-            color: #1976D2 !important;
-            font-family: Georgia, serif !important;
-        }
-        
-        .testimonials .testimonial-text {
-            display: block !important;
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-        
-        /* Force normal text flow */
-        .testimonials .testimonial-slide,
-        .testimonials .testimonial-content,
-        .testimonials .testimonial-track {
-            width: 100% !important;
-            max-width: 100% !important;
-        }
-    </style>
 </head>
 <body>
     <!-- Header Section -->
@@ -223,87 +179,20 @@
             <div class="testimonial-container">
                 <div class="testimonial-slider">
                     <div class="testimonial-track">
-                        <div class="testimonial-slide">
-                            <div class="testimonial-content">
-                                <div class="testimonial-text">
-                                    <p>The home IV service was excellent. The nurse was professional, gentle, and made me feel comfortable throughout the procedure. I highly recommend HomeAid Services.</p>
-                                </div>
-                                <div class="testimonial-author">
-                                    <div class="author-image">
-                                        <img src="https://randomuser.me/api/portraits/men/32.jpg" alt="Patient">
-                                    </div>
-                                    <div class="author-info">
-                                        <h4>Ahmed Khan</h4>
-                                        <p>IV Medication Patient</p>
-                                    </div>
-                                    <div class="testimonial-rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="testimonial-slide">
-                            <div class="testimonial-content">
-                                <div class="testimonial-text">
-                                    <p>After my surgery, I was worried about wound care. HomeAid's post-operative care was a blessing. The regular visits and professional care helped me recover faster.</p>
-                                </div>
-                                <div class="testimonial-author">
-                                    <div class="author-image">
-                                        <img src="https://randomuser.me/api/portraits/women/44.jpg" alt="Patient">
-                                    </div>
-                                    <div class="author-info">
-                                        <h4>Fatima Zahra</h4>
-                                        <p>Post-Surgery Patient</p>
-                                    </div>
-                                    <div class="testimonial-rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
-                        <div class="testimonial-slide">
-                            <div class="testimonial-content">
-                                <div class="testimonial-text">
-                                    <p>When my father needed regular nebulization treatments, HomeAid made it so convenient. The staff was punctual, caring, and explained everything clearly. Thank you!</p>
-                                </div>
-                                <div class="testimonial-author">
-                                    <div class="author-image">
-                                        <img src="https://randomuser.me/api/portraits/men/67.jpg" alt="Patient">
-                                    </div>
-                                    <div class="author-info">
-                                        <h4>Usman Ali</h4>
-                                        <p>Family of Nebulization Patient</p>
-                                    </div>
-                                    <div class="testimonial-rating">
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star"></i>
-                                        <i class="fas fa-star-half-alt"></i>
-                                    </div>
-                                </div>
-                            </div>
-                        </div>
+                        <!-- Dynamic reviews will be loaded here -->
                     </div>
                 </div>
-                <div class="testimonial-controls">
-                    <button class="prev-testimonial"><i class="fas fa-arrow-circle-left"></i></button>
-                    <!-- Dots removed as requested -->
-                    <button class="next-testimonial"><i class="fas fa-arrow-circle-right"></i></button>
-                </div>
+                
+                <!-- Navigation controls will be added by JavaScript -->
+                
                 <div class="add-review-btn">
-                    <button id="openReviewForm" class="review-btn">Share Your Experience</button>
+                    <button id="openReviewForm" class="review-btn">
+                        <i class="fas fa-star"></i> Share Your Experience
+                    </button>
                 </div>
             </div>
         </div>
+        
         <!-- Review Form Modal -->
         <div id="reviewModal" class="review-modal">
             <div class="review-modal-content">
@@ -322,31 +211,27 @@
                             <option value="" disabled selected>Select Service Used</option>
                             <option value="IV Line">IV Line</option>
                             <option value="IV Medication">IV Medication</option>
-                            <option value="Diabetic Wound Care">Diabetic Wound Care</option>
-                            <option value="Antiseptic Dressing">Antiseptic Dressing</option>
-                            <option value="Stitch Removal">Stitch Removal</option>
-                            <option value="Change of Dressing">Change of Dressing</option>
-                            <option value="Urinary Catheterization">Urinary Catheterization</option>
-                            <option value="Nebulization">Nebulization</option>
-                            <option value="Dengue Care">Dengue Care</option>
-                            <option value="Post-Operative Care">Post-Operative Care</option>
+                            <option value="Blood Test">Blood Test</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Wound Care">Wound Care</option>
+                            <option value="Physiotherapy">Physiotherapy</option>
+                            <option value="Nursing Care">Nursing Care</option>
+                            <option value="Other">Other</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <div class="rating-select">
-                            <p>Your Rating:</p>
-                            <div class="star-rating">
-                                <i class="far fa-star" data-rating="1"></i>
-                                <i class="far fa-star" data-rating="2"></i>
-                                <i class="far fa-star" data-rating="3"></i>
-                                <i class="far fa-star" data-rating="4"></i>
-                                <i class="far fa-star" data-rating="5"></i>
-                                <input type="hidden" id="reviewRating" name="reviewRating" value="0">
-                            </div>
+                        <label>Rate Your Experience:</label>
+                        <div class="rating-input">
+                            <i class="far fa-star" data-rating="1"></i>
+                            <i class="far fa-star" data-rating="2"></i>
+                            <i class="far fa-star" data-rating="3"></i>
+                            <i class="far fa-star" data-rating="4"></i>
+                            <i class="far fa-star" data-rating="5"></i>
+                            <input type="hidden" id="reviewRating" name="reviewRating" value="0">
                         </div>
                     </div>
                     <div class="form-group">
-                        <textarea id="reviewMessage" name="reviewMessage" placeholder="Share your experience with us" rows="5" required></textarea>
+                        <textarea id="reviewMessage" name="reviewMessage" placeholder="Share your experience with us..." rows="5" required></textarea>
                     </div>
                     <button type="submit" class="submit-btn">Submit Review</button>
                 </form>
@@ -492,8 +377,8 @@
     <!-- MAIN SCRIPT - ENABLE IT -->
     <script src="script.js"></script>
     
-    <!-- VERCEL AUTOMATED REVIEWS SYSTEM -->
-    <script src="vercel-reviews.js"></script>
+    <!-- CLEAN REVIEWS SYSTEM -->
+    <script src="clean-reviews.js"></script>
     
     <!-- MINIMAL TESTIMONIAL FUNCTIONALITY -->
     <script>
