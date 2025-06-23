@@ -34,10 +34,15 @@ class VercelReviews {
                 this.reviews = data.reviews || [];
                 console.log('Loaded reviews from Vercel KV:', this.reviews.length);
             } else {
-                throw new Error('Failed to load reviews');
+                throw new Error('API not available - using fallback reviews');
             }
         } catch (error) {
-            console.error('Error loading reviews:', error);
+            console.log('API not available, using fallback reviews:', error.message);
+            this.reviews = this.getFallbackReviews();
+        }
+
+        // Ensure we always have reviews to display
+        if (this.reviews.length === 0) {
             this.reviews = this.getFallbackReviews();
         }
     }
@@ -77,20 +82,28 @@ class VercelReviews {
 
     displayReviews() {
         const testimonialTrack = document.querySelector('.testimonial-track');
-        if (!testimonialTrack) return;
+        if (!testimonialTrack) {
+            console.log('Testimonial track not found');
+            return;
+        }
 
         testimonialTrack.innerHTML = '';
 
         // Sort by date (newest first)
         const sortedReviews = [...this.reviews].sort((a, b) => new Date(b.date) - new Date(a.date));
 
+        if (sortedReviews.length === 0) {
+            console.log('No reviews to display');
+            return;
+        }
+
         // Create testimonial elements
         sortedReviews.forEach((review, index) => {
             this.addReviewToDOM(review, index);
         });
 
-        // Create progress indicators
-        this.createProgressIndicators(sortedReviews.length);
+        // Create navigation controls
+        this.createNavigationControls(sortedReviews.length);
 
         // Initialize slider
         this.initializeSlider();
@@ -123,14 +136,24 @@ class VercelReviews {
         testimonialTrack.appendChild(testimonialDiv);
     }
 
-    createProgressIndicators(count) {
-        // Remove existing progress indicators
-        const existingProgress = document.querySelector('.testimonial-progress');
-        if (existingProgress) {
-            existingProgress.remove();
+    createNavigationControls(count) {
+        // Remove existing controls
+        const existingControls = document.querySelector('.testimonial-controls');
+        if (existingControls) {
+            existingControls.remove();
         }
 
-        // Create new progress indicators
+        // Create navigation controls container
+        const controlsContainer = document.createElement('div');
+        controlsContainer.className = 'testimonial-controls';
+
+        // Previous button
+        const prevBtn = document.createElement('button');
+        prevBtn.className = 'testimonial-nav prev-testimonial';
+        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+        prevBtn.addEventListener('click', () => this.previousSlide());
+
+        // Progress indicators
         const progressContainer = document.createElement('div');
         progressContainer.className = 'testimonial-progress';
 
@@ -142,10 +165,21 @@ class VercelReviews {
             progressContainer.appendChild(dot);
         }
 
-        // Insert progress indicators before the add review button
+        // Next button
+        const nextBtn = document.createElement('button');
+        nextBtn.className = 'testimonial-nav next-testimonial';
+        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+        nextBtn.addEventListener('click', () => this.nextSlide());
+
+        // Add all controls to container
+        controlsContainer.appendChild(prevBtn);
+        controlsContainer.appendChild(progressContainer);
+        controlsContainer.appendChild(nextBtn);
+
+        // Insert controls before the add review button
         const addReviewBtn = document.querySelector('.add-review-btn');
         if (addReviewBtn) {
-            addReviewBtn.parentNode.insertBefore(progressContainer, addReviewBtn);
+            addReviewBtn.parentNode.insertBefore(controlsContainer, addReviewBtn);
         }
     }
 
@@ -159,36 +193,19 @@ class VercelReviews {
 
     initializeSlider() {
         const testimonials = document.querySelectorAll('.testimonial');
-        if (testimonials.length === 0) return;
-
-        // Add navigation buttons if they don't exist
-        this.addNavigationButtons();
+        if (testimonials.length === 0) {
+            console.log('No testimonials found for slider');
+            return;
+        }
 
         // Add auto-scroll indicator
         this.addAutoScrollIndicator();
 
-        // Set up navigation
-        this.setupNavigation();
+        // Show first slide
+        this.currentSlide = 0;
+        this.showSlide(0);
 
         console.log('Slider initialized with', testimonials.length, 'slides');
-    }
-
-    addNavigationButtons() {
-        const slider = document.querySelector('.testimonial-slider');
-        if (!slider || slider.querySelector('.prev-testimonial')) return;
-
-        const prevBtn = document.createElement('button');
-        prevBtn.className = 'testimonial-nav prev-testimonial';
-        prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
-        prevBtn.addEventListener('click', () => this.previousSlide());
-
-        const nextBtn = document.createElement('button');
-        nextBtn.className = 'testimonial-nav next-testimonial';
-        nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
-        nextBtn.addEventListener('click', () => this.nextSlide());
-
-        slider.appendChild(prevBtn);
-        slider.appendChild(nextBtn);
     }
 
     addAutoScrollIndicator() {
@@ -201,17 +218,27 @@ class VercelReviews {
         slider.appendChild(indicator);
     }
 
-    setupNavigation() {
-        const prevBtn = document.querySelector('.prev-testimonial');
-        const nextBtn = document.querySelector('.next-testimonial');
+    showSlide(index) {
+        const testimonials = document.querySelectorAll('.testimonial');
+        const progressDots = document.querySelectorAll('.progress-dot');
+        
+        if (testimonials.length === 0) return;
 
-        if (prevBtn) {
-            prevBtn.addEventListener('click', () => this.previousSlide());
-        }
+        // Hide all testimonials
+        testimonials.forEach((testimonial, i) => {
+            testimonial.classList.remove('active');
+            if (i === index) {
+                testimonial.classList.add('active');
+            }
+        });
 
-        if (nextBtn) {
-            nextBtn.addEventListener('click', () => this.nextSlide());
-        }
+        // Update progress dots
+        progressDots.forEach((dot, i) => {
+            dot.classList.toggle('active', i === index);
+        });
+
+        this.currentSlide = index;
+        console.log('Showing slide:', index);
     }
 
     startAutoScroll() {
@@ -251,33 +278,18 @@ class VercelReviews {
         if (this.isTransitioning) return;
 
         const testimonials = document.querySelectorAll('.testimonial');
-        const progressDots = document.querySelectorAll('.progress-dot');
         
         if (testimonials.length === 0 || index >= testimonials.length) return;
 
         this.isTransitioning = true;
 
-        // Update active testimonial
-        testimonials.forEach((testimonial, i) => {
-            testimonial.classList.remove('active', 'prev');
-            if (i === index) {
-                testimonial.classList.add('active');
-            } else if (i === this.currentSlide) {
-                testimonial.classList.add('prev');
-            }
-        });
-
-        // Update progress dots
-        progressDots.forEach((dot, i) => {
-            dot.classList.toggle('active', i === index);
-        });
-
-        this.currentSlide = index;
+        // Show the selected slide
+        this.showSlide(index);
 
         // Reset transition flag after animation completes
         setTimeout(() => {
             this.isTransitioning = false;
-        }, 800);
+        }, 600);
 
         // Restart auto-scroll
         this.startAutoScroll();

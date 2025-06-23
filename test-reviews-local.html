@@ -1,0 +1,486 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Reviews - HomeAid</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+    <link rel="stylesheet" href="reviews-ui.css">
+    <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Poppins', sans-serif;
+            background: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+        
+        /* Modal Styles */
+        .review-modal {
+            display: none;
+            position: fixed;
+            z-index: 1000;
+            left: 0;
+            top: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0,0,0,0.6);
+        }
+        
+        .review-modal-content {
+            background-color: white;
+            margin: 5% auto;
+            padding: 30px;
+            border-radius: 15px;
+            width: 90%;
+            max-width: 500px;
+            position: relative;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        .close-modal {
+            position: absolute;
+            right: 20px;
+            top: 20px;
+            font-size: 28px;
+            font-weight: bold;
+            cursor: pointer;
+            color: #aaa;
+        }
+        
+        .close-modal:hover {
+            color: #000;
+        }
+        
+        .form-group {
+            margin-bottom: 20px;
+        }
+        
+        .form-group input,
+        .form-group select,
+        .form-group textarea {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            box-sizing: border-box;
+        }
+        
+        .form-group label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #333;
+        }
+        
+        .rating-input {
+            display: flex;
+            gap: 5px;
+            font-size: 1.5rem;
+            justify-content: center;
+        }
+        
+        .rating-input i {
+            cursor: pointer;
+            color: #ddd;
+            transition: color 0.2s ease;
+        }
+        
+        .rating-input i:hover,
+        .rating-input i.fas {
+            color: #ffc107;
+        }
+        
+        .submit-btn {
+            width: 100%;
+            background: linear-gradient(135deg, #1976D2, #42A5F5);
+            color: white;
+            padding: 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+            font-family: 'Poppins', sans-serif;
+            font-weight: 600;
+        }
+        
+        .submit-btn:hover {
+            opacity: 0.9;
+        }
+        
+        .form-status {
+            margin-top: 15px;
+            padding: 12px;
+            border-radius: 5px;
+            display: none;
+            text-align: center;
+        }
+        
+        .form-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .form-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+    </style>
+</head>
+<body>
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Patient Reviews</h2>
+            <div class="testimonial-container">
+                <div class="testimonial-slider">
+                    <div class="testimonial-track">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                    <div class="auto-scroll-indicator">
+                        <i class="fas fa-play"></i> Auto
+                    </div>
+                </div>
+                
+                <!-- Navigation controls will be added here by JavaScript -->
+                
+                <div class="add-review-btn">
+                    <button id="openReviewForm" class="review-btn">
+                        <i class="fas fa-star"></i> Share Your Experience
+                    </button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Review Form Modal -->
+        <div id="reviewModal" class="review-modal">
+            <div class="review-modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>Share Your Experience</h3>
+                <form id="reviewForm" name="reviews">
+                    <div class="form-group">
+                        <input type="text" id="reviewName" name="reviewName" placeholder="Your Name" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <input type="email" id="reviewEmail" name="reviewEmail" placeholder="Your Email" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <select id="reviewService" name="reviewService" required>
+                            <option value="" disabled selected>Select Service Used</option>
+                            <option value="IV Line">IV Line</option>
+                            <option value="IV Medication">IV Medication</option>
+                            <option value="Blood Test">Blood Test</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Wound Care">Wound Care</option>
+                            <option value="Physiotherapy">Physiotherapy</option>
+                            <option value="Nursing Care">Nursing Care</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Rate Your Experience:</label>
+                        <div class="rating-input">
+                            <i class="far fa-star" data-rating="1"></i>
+                            <i class="far fa-star" data-rating="2"></i>
+                            <i class="far fa-star" data-rating="3"></i>
+                            <i class="far fa-star" data-rating="4"></i>
+                            <i class="far fa-star" data-rating="5"></i>
+                            <input type="hidden" id="reviewRating" name="reviewRating" value="0">
+                        </div>
+                    </div>
+                    
+                    <div class="form-group">
+                        <textarea id="reviewMessage" name="reviewMessage" placeholder="Share your experience with us..." rows="4" required></textarea>
+                    </div>
+                    
+                    <button type="submit" class="submit-btn">
+                        <i class="fas fa-paper-plane"></i> Submit Review
+                    </button>
+                </form>
+                <div id="review-status" class="form-status"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Test Reviews System (Local Version) -->
+    <script>
+        // Local test version with fallback reviews
+        class TestReviews {
+            constructor() {
+                this.reviews = [
+                    {
+                        name: 'Sarah Ahmed',
+                        service: 'IV Medication',
+                        message: 'Excellent service! The nurse was very professional and made me feel comfortable throughout the treatment. The staff arrived on time and handled everything with great care.',
+                        rating: 5,
+                        date: '2024-06-15'
+                    },
+                    {
+                        name: 'Muhammad Ali',
+                        service: 'Blood Test',
+                        message: 'Quick and efficient service. Very satisfied with the home visit. The convenience of having medical services at home is incredible.',
+                        rating: 5,
+                        date: '2024-06-10'
+                    },
+                    {
+                        name: 'Fatima Khan',
+                        service: 'IV Line',
+                        message: 'Professional staff and excellent care. Highly recommended! They made the whole process stress-free and comfortable.',
+                        rating: 5,
+                        date: '2024-06-05'
+                    },
+                    {
+                        name: 'Ahmed Hassan',
+                        service: 'Nursing Care',
+                        message: 'Outstanding nursing care for my elderly mother. The team was compassionate, skilled, and treated her with dignity and respect.',
+                        rating: 5,
+                        date: '2024-06-01'
+                    }
+                ];
+                this.currentSlide = 0;
+                this.autoScrollInterval = null;
+                this.autoScrollDelay = 12000;
+                this.isTransitioning = false;
+                this.init();
+            }
+
+            init() {
+                this.displayReviews();
+                this.setupFormHandler();
+                this.setupModalHandlers();
+                this.setupStarRating();
+                this.startAutoScroll();
+            }
+
+            displayReviews() {
+                const testimonialTrack = document.querySelector('.testimonial-track');
+                if (!testimonialTrack) return;
+
+                testimonialTrack.innerHTML = '';
+
+                this.reviews.forEach((review, index) => {
+                    this.addReviewToDOM(review, index);
+                });
+
+                this.createNavigationControls(this.reviews.length);
+                this.showSlide(0);
+            }
+
+            addReviewToDOM(review, index) {
+                const testimonialTrack = document.querySelector('.testimonial-track');
+                if (!testimonialTrack) return;
+
+                const testimonialDiv = document.createElement('div');
+                testimonialDiv.className = `testimonial ${index === 0 ? 'active' : ''}`;
+                
+                testimonialDiv.innerHTML = `
+                    <div class="testimonial-content">
+                        <div class="testimonial-text">
+                            <p>${review.message}</p>
+                        </div>
+                        <div class="testimonial-author">
+                            <h4>${review.name}</h4>
+                            <p>${review.service}</p>
+                            <div class="rating">
+                                ${this.generateStars(review.rating)}
+                            </div>
+                        </div>
+                    </div>
+                `;
+                testimonialTrack.appendChild(testimonialDiv);
+            }
+
+            generateStars(rating) {
+                let stars = '';
+                for (let i = 1; i <= 5; i++) {
+                    stars += i <= rating ? '<i class="fas fa-star"></i>' : '<i class="far fa-star"></i>';
+                }
+                return stars;
+            }
+
+            createNavigationControls(count) {
+                const existingControls = document.querySelector('.testimonial-controls');
+                if (existingControls) existingControls.remove();
+
+                const controlsContainer = document.createElement('div');
+                controlsContainer.className = 'testimonial-controls';
+
+                const prevBtn = document.createElement('button');
+                prevBtn.className = 'testimonial-nav prev-testimonial';
+                prevBtn.innerHTML = '<i class="fas fa-chevron-left"></i>';
+                prevBtn.addEventListener('click', () => this.previousSlide());
+
+                const progressContainer = document.createElement('div');
+                progressContainer.className = 'testimonial-progress';
+
+                for (let i = 0; i < count; i++) {
+                    const dot = document.createElement('div');
+                    dot.className = `progress-dot ${i === 0 ? 'active' : ''}`;
+                    dot.addEventListener('click', () => this.goToSlide(i));
+                    progressContainer.appendChild(dot);
+                }
+
+                const nextBtn = document.createElement('button');
+                nextBtn.className = 'testimonial-nav next-testimonial';
+                nextBtn.innerHTML = '<i class="fas fa-chevron-right"></i>';
+                nextBtn.addEventListener('click', () => this.nextSlide());
+
+                controlsContainer.appendChild(prevBtn);
+                controlsContainer.appendChild(progressContainer);
+                controlsContainer.appendChild(nextBtn);
+
+                const addReviewBtn = document.querySelector('.add-review-btn');
+                if (addReviewBtn) {
+                    addReviewBtn.parentNode.insertBefore(controlsContainer, addReviewBtn);
+                }
+            }
+
+            showSlide(index) {
+                const testimonials = document.querySelectorAll('.testimonial');
+                const progressDots = document.querySelectorAll('.progress-dot');
+                
+                testimonials.forEach((testimonial, i) => {
+                    testimonial.classList.toggle('active', i === index);
+                });
+
+                progressDots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === index);
+                });
+
+                this.currentSlide = index;
+            }
+
+            nextSlide() {
+                const nextIndex = (this.currentSlide + 1) % this.reviews.length;
+                this.goToSlide(nextIndex);
+            }
+
+            previousSlide() {
+                const prevIndex = (this.currentSlide - 1 + this.reviews.length) % this.reviews.length;
+                this.goToSlide(prevIndex);
+            }
+
+            goToSlide(index) {
+                if (this.isTransitioning) return;
+                this.isTransitioning = true;
+                this.showSlide(index);
+                setTimeout(() => { this.isTransitioning = false; }, 600);
+                this.startAutoScroll();
+            }
+
+            startAutoScroll() {
+                if (this.autoScrollInterval) clearInterval(this.autoScrollInterval);
+                this.autoScrollInterval = setInterval(() => {
+                    if (!this.isTransitioning) this.nextSlide();
+                }, this.autoScrollDelay);
+            }
+
+            setupFormHandler() {
+                const reviewForm = document.getElementById('reviewForm');
+                if (!reviewForm) return;
+
+                reviewForm.addEventListener('submit', (e) => {
+                    e.preventDefault();
+                    
+                    const formData = new FormData(e.target);
+                    const reviewData = {
+                        name: formData.get('reviewName').trim(),
+                        email: formData.get('reviewEmail').trim(),
+                        service: formData.get('reviewService'),
+                        rating: parseInt(formData.get('reviewRating')),
+                        message: formData.get('reviewMessage').trim(),
+                        date: new Date().toISOString().split('T')[0]
+                    };
+
+                    // Add to reviews array
+                    this.reviews.unshift(reviewData);
+                    this.displayReviews();
+                    this.goToSlide(0);
+
+                    this.showStatus('Review added successfully! (This is a local test)', 'success');
+                    e.target.reset();
+                    this.resetStarRating();
+                    this.closeModal();
+                });
+            }
+
+            setupModalHandlers() {
+                const openBtn = document.getElementById('openReviewForm');
+                const modal = document.getElementById('reviewModal');
+                const closeBtn = document.querySelector('.close-modal');
+
+                if (openBtn) openBtn.addEventListener('click', () => modal.style.display = 'block');
+                if (closeBtn) closeBtn.addEventListener('click', () => this.closeModal());
+                if (modal) modal.addEventListener('click', (e) => {
+                    if (e.target === modal) this.closeModal();
+                });
+            }
+
+            closeModal() {
+                const modal = document.getElementById('reviewModal');
+                if (modal) modal.style.display = 'none';
+            }
+
+            setupStarRating() {
+                const stars = document.querySelectorAll('.rating-input i');
+                const ratingInput = document.getElementById('reviewRating');
+                
+                stars.forEach(star => {
+                    star.addEventListener('click', (e) => {
+                        const rating = parseInt(e.target.getAttribute('data-rating'));
+                        ratingInput.value = rating;
+                        this.updateStarDisplay(rating);
+                    });
+                });
+            }
+
+            updateStarDisplay(rating) {
+                const stars = document.querySelectorAll('.rating-input i');
+                stars.forEach((star, index) => {
+                    star.className = index < rating ? 'fas fa-star' : 'far fa-star';
+                });
+            }
+
+            resetStarRating() {
+                const ratingInput = document.getElementById('reviewRating');
+                if (ratingInput) {
+                    ratingInput.value = '0';
+                    this.updateStarDisplay(0);
+                }
+            }
+
+            showStatus(message, type) {
+                const statusDiv = document.getElementById('review-status');
+                if (!statusDiv) return;
+
+                statusDiv.textContent = message;
+                statusDiv.className = `form-status ${type}`;
+                statusDiv.style.display = 'block';
+
+                setTimeout(() => {
+                    statusDiv.style.display = 'none';
+                }, 5000);
+            }
+        }
+
+        // Initialize when DOM is loaded
+        document.addEventListener('DOMContentLoaded', function() {
+            window.testReviews = new TestReviews();
+        });
+    </script>
+</body>
+</html>
