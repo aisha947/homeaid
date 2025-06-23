@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Test Moderated Reviews - HomeAid</title>
+    <link rel="stylesheet" href="styles.css">
+    <link rel="stylesheet" href="responsive-reviews.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0-beta3/css/all.min.css">
+</head>
+<body>
+    <section id="testimonials" class="testimonials">
+        <div class="container">
+            <h2 class="section-title">Patient Reviews (Moderated)</h2>
+            <div class="testimonial-container">
+                <div class="testimonial-slider">
+                    <div class="testimonial-track">
+                        <!-- Reviews will be loaded here -->
+                    </div>
+                    <button class="prev-testimonial"><i class="fas fa-arrow-circle-left"></i></button>
+                    <button class="next-testimonial"><i class="fas fa-arrow-circle-right"></i></button>
+                </div>
+                <div class="add-review-btn">
+                    <button id="openReviewForm" class="review-btn">Share Your Experience</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- Review Form Modal -->
+        <div id="reviewModal" class="review-modal">
+            <div class="review-modal-content">
+                <span class="close-modal">&times;</span>
+                <h3>Share Your Experience</h3>
+                <form id="reviewForm" name="reviews" data-netlify="true" netlify>
+                    <input type="hidden" name="form-name" value="reviews" />
+                    <div class="form-group">
+                        <input type="text" id="reviewName" name="reviewName" placeholder="Your Name" required>
+                    </div>
+                    <div class="form-group">
+                        <input type="email" id="reviewEmail" name="reviewEmail" placeholder="Your Email" required>
+                    </div>
+                    <div class="form-group">
+                        <select id="reviewService" name="reviewService" required>
+                            <option value="" disabled selected>Select Service Used</option>
+                            <option value="IV Line">IV Line</option>
+                            <option value="IV Medication">IV Medication</option>
+                            <option value="Blood Test">Blood Test</option>
+                            <option value="Injection">Injection</option>
+                            <option value="Wound Care">Wound Care</option>
+                            <option value="Physiotherapy">Physiotherapy</option>
+                            <option value="Nursing Care">Nursing Care</option>
+                            <option value="Other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Rate Your Experience:</label>
+                        <div class="rating-input">
+                            <i class="far fa-star" data-rating="1"></i>
+                            <i class="far fa-star" data-rating="2"></i>
+                            <i class="far fa-star" data-rating="3"></i>
+                            <i class="far fa-star" data-rating="4"></i>
+                            <i class="far fa-star" data-rating="5"></i>
+                            <input type="hidden" id="reviewRating" name="reviewRating" value="0">
+                        </div>
+                    </div>
+                    <div class="form-group">
+                        <textarea id="reviewMessage" name="reviewMessage" placeholder="Share your experience with us" rows="5" required></textarea>
+                    </div>
+                    <button type="submit" class="submit-btn">Submit Review</button>
+                </form>
+                <div id="review-status" class="form-status"></div>
+            </div>
+        </div>
+    </section>
+
+    <!-- MODERATED REVIEWS SYSTEM -->
+    <script src="netlify-moderated-reviews.js"></script>
+    
+    <style>
+        /* Basic styling for the test page */
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 20px;
+            background-color: #f5f5f5;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        .section-title {
+            text-align: center;
+            margin-bottom: 30px;
+            color: #333;
+        }
+        
+        .form-status {
+            margin-top: 15px;
+            padding: 10px;
+            border-radius: 5px;
+            display: none;
+        }
+        
+        .form-status.success {
+            background-color: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+        
+        .form-status.error {
+            background-color: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+        
+        .review-btn {
+            background: #1976D2;
+            color: white;
+            padding: 12px 24px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+        
+        .review-btn:hover {
+            background: #1565C0;
+        }
+    </style>
+</body>
+</html>
