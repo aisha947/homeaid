@@ -26,7 +26,10 @@ class CleanReviews {
     async setup() {
         console.log('🎯 Setting up reviews...');
         
+        // Load reviews first
         await this.loadReviews();
+        
+        // Then set up the UI
         this.displayReviews();
         this.createControls();
         this.setupFormHandler();
@@ -38,26 +41,57 @@ class CleanReviews {
     }
 
     async loadReviews() {
-        try {
-            console.log('🔍 Loading reviews from Redis API...');
-            const response = await fetch('/api/reviews');
-            
-            if (response.ok) {
-                const data = await response.json();
-                this.reviews = data.reviews || [];
-                console.log('✅ Loaded reviews from Redis database:', this.reviews.length);
-            } else {
-                throw new Error(`API returned status: ${response.status}`);
-            }
-        } catch (error) {
-            console.log('⚠️ API not available, using fallback reviews:', error.message);
+        console.log('🔍 Loading reviews...');
+        
+        // First, try to load from localStorage for immediate display
+        const localReviews = this.loadFromLocalStorage();
+        if (localReviews.length > 0) {
+            this.reviews = localReviews;
+            console.log('📱 Loaded from localStorage:', this.reviews.length);
+        } else {
+            // Use fallback reviews for immediate display
             this.reviews = this.getFallbackReviews();
+            console.log('📝 Using fallback reviews:', this.reviews.length);
         }
 
-        // Ensure we always have reviews to display
-        if (this.reviews.length === 0) {
-            console.log('📝 No reviews found, loading defaults...');
-            this.reviews = this.getFallbackReviews();
+        // Then try to load from API in the background
+        try {
+            const response = await fetch('/api/reviews');
+            if (response.ok) {
+                const data = await response.json();
+                if (data.reviews && data.reviews.length > 0) {
+                    this.reviews = data.reviews;
+                    this.saveToLocalStorage(this.reviews);
+                    console.log('✅ Updated from API:', this.reviews.length);
+                    
+                    // Refresh display with new data
+                    this.displayReviews();
+                    this.createControls();
+                }
+            }
+        } catch (error) {
+            console.log('⚠️ API not available:', error.message);
+        }
+    }
+
+    loadFromLocalStorage() {
+        try {
+            const stored = localStorage.getItem('homeaid_reviews');
+            if (stored) {
+                const parsed = JSON.parse(stored);
+                return Array.isArray(parsed) ? parsed : [];
+            }
+        } catch (error) {
+            console.log('localStorage error:', error);
+        }
+        return [];
+    }
+
+    saveToLocalStorage(reviews) {
+        try {
+            localStorage.setItem('homeaid_reviews', JSON.stringify(reviews));
+        } catch (error) {
+            console.log('localStorage save error:', error);
         }
     }
 
@@ -104,6 +138,11 @@ class CleanReviews {
         console.log('🎨 Creating review elements...');
         track.innerHTML = '';
 
+        if (this.reviews.length === 0) {
+            track.innerHTML = '<div style="padding: 40px; text-align: center; color: #666;">Loading reviews...</div>';
+            return;
+        }
+
         this.reviews.forEach((review, index) => {
             const reviewElement = document.createElement('div');
             reviewElement.className = `testimonial ${index === 0 ? 'active' : ''}`;
@@ -114,7 +153,7 @@ class CleanReviews {
                     </div>
                     <div class="testimonial-author">
                         <h4>${review.name}</h4>
-                        <p>${review.service}</p>
+                        <div class="service-badge">${review.service}</div>
                         <div class="rating">
                             ${this.generateStars(review.rating)}
                         </div>
@@ -150,6 +189,8 @@ class CleanReviews {
         if (existingControls) {
             existingControls.remove();
         }
+
+        if (this.reviews.length <= 1) return; // Don't show controls for single review
 
         // Create new controls
         const controlsContainer = document.createElement('div');
@@ -213,17 +254,19 @@ class CleanReviews {
     }
 
     nextSlide() {
+        if (this.reviews.length <= 1) return;
         const nextIndex = (this.currentSlide + 1) % this.reviews.length;
         this.goToSlide(nextIndex);
     }
 
     previousSlide() {
+        if (this.reviews.length <= 1) return;
         const prevIndex = (this.currentSlide - 1 + this.reviews.length) % this.reviews.length;
         this.goToSlide(prevIndex);
     }
 
     goToSlide(index) {
-        if (this.isTransitioning) return;
+        if (this.isTransitioning || this.reviews.length <= 1) return;
         
         this.isTransitioning = true;
         this.showSlide(index);
@@ -238,6 +281,8 @@ class CleanReviews {
 
     startAutoScroll() {
         this.stopAutoScroll();
+        
+        if (this.reviews.length <= 1) return; // Don't auto-scroll single review
         
         this.autoScrollInterval = setInterval(() => {
             if (!this.isTransitioning) {
@@ -267,7 +312,8 @@ class CleanReviews {
                 service: formData.get('reviewService'),
                 rating: parseInt(formData.get('reviewRating')),
                 message: formData.get('reviewMessage').trim(),
-                date: new Date().toISOString().split('T')[0]
+                date: new Date().toISOString().split('T')[0],
+                id: 'review_' + Date.now()
             };
 
             if (!this.validateReview(reviewData)) {
@@ -281,7 +327,7 @@ class CleanReviews {
             submitBtn.disabled = true;
 
             try {
-                // Try to submit to Vercel API
+                // Try to submit to API
                 const response = await fetch('/api/reviews', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
@@ -290,15 +336,14 @@ class CleanReviews {
 
                 if (response.ok) {
                     console.log('✅ Review submitted to API');
-                } else {
-                    console.log('⚠️ API not available, adding locally');
                 }
             } catch (error) {
-                console.log('⚠️ API error, adding locally:', error.message);
+                console.log('⚠️ API submission failed:', error.message);
             }
 
-            // Add review to display immediately
+            // Add review to display immediately and save to localStorage
             this.reviews.unshift(reviewData);
+            this.saveToLocalStorage(this.reviews);
             this.displayReviews();
             this.createControls();
             this.goToSlide(0);

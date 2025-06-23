@@ -2,9 +2,6 @@
   "name": "homeaid-reviews",
   "version": "1.0.0",
   "description": "HomeAid Services website with automated reviews",
-  "dependencies": {
-    "redis": "^4.6.0"
-  },
   "scripts": {
     "build": "echo 'Static site ready for deployment'"
   }

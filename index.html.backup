@@ -311,17 +311,200 @@
             duration: 800,
             once: true
         });
-    <script src="https://unpkg.com/aos@next/dist/aos.js"></script>
-    <script src="script.js"></script>
+    </script>
+    
+    <!-- INLINE FORCE FIX FOR TESTIMONIALS -->
     <script>
-        // Initialize AOS animation library
-        AOS.init({
-            duration: 800,
-            once: true
+        // FORCE FIX TESTIMONIAL TEXT IMMEDIATELY
+        function forceFixTestimonials() {
+            console.log('Forcing testimonial fix...');
+            const testimonialTexts = document.querySelectorAll('.testimonial-text p');
+            console.log('Found testimonials:', testimonialTexts.length);
+            
+            testimonialTexts.forEach((p, index) => {
+                // Apply styles directly with JavaScript
+                p.style.setProperty('display', 'block', 'important');
+                p.style.setProperty('word-wrap', 'break-word', 'important');
+                p.style.setProperty('overflow-wrap', 'break-word', 'important');
+                p.style.setProperty('white-space', 'normal', 'important');
+                p.style.setProperty('width', '100%', 'important');
+                p.style.setProperty('max-width', '100%', 'important');
+                p.style.setProperty('-webkit-box-orient', 'initial', 'important');
+                p.style.setProperty('-webkit-line-clamp', 'initial', 'important');
+                p.style.setProperty('text-overflow', 'initial', 'important');
+                
+                console.log(`Fixed testimonial ${index + 1}: "${p.textContent.substring(0, 30)}..."`);
+            });
+        }
+        
+        // Run immediately when DOM is ready
+        document.addEventListener('DOMContentLoaded', forceFixTestimonials);
+        
+        // Run again after everything loads
+        window.addEventListener('load', forceFixTestimonials);
+        
+        // Run after a delay to catch any dynamic content
+        setTimeout(forceFixTestimonials, 2000);
+        
+        // DEBUG: Check if review form is working
+        document.addEventListener('DOMContentLoaded', function() {
+            console.log('=== REVIEW FORM DEBUG ===');
+            const reviewForm = document.getElementById('reviewForm');
+            const openReviewBtn = document.getElementById('openReviewForm');
+            const reviewModal = document.getElementById('reviewModal');
+            
+            console.log('Review form found:', !!reviewForm);
+            console.log('Open review button found:', !!openReviewBtn);
+            console.log('Review modal found:', !!reviewModal);
+            
+            if (reviewForm) {
+                console.log('Adding debug event listener to form');
+                reviewForm.addEventListener('submit', function(e) {
+                    console.log('FORM SUBMITTED - DEBUG LISTENER');
+                    console.log('Event:', e);
+                });
+            }
+            
+            if (openReviewBtn) {
+                console.log('Adding debug event listener to open button');
+                openReviewBtn.addEventListener('click', function() {
+                    console.log('OPEN REVIEW BUTTON CLICKED');
+                });
+            }
         });
     </script>
     
+    <!-- MAIN SCRIPT - ENABLE IT -->
+    <script src="script.js"></script>
+    
     <!-- CLEAN REVIEWS SYSTEM -->
     <script src="clean-reviews.js"></script>
+    
+    <!-- MINIMAL TESTIMONIAL FUNCTIONALITY -->
+    <script>
+        // Basic testimonial slider functionality
+        let currentIndex = 0;
+        let slides = [];
+        let dots = [];
+        let slideInterval;
+        
+        function initTestimonialSlider() {
+            const testimonialSlider = document.querySelector('.testimonial-slider');
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            slides = document.querySelectorAll('.testimonial-slide');
+            dots = document.querySelectorAll('.dot');
+            
+            if (!testimonialSlider || !testimonialTrack || slides.length === 0) return;
+            
+            let slideWidth = testimonialSlider.offsetWidth;
+            testimonialTrack.style.width = `${slideWidth * slides.length}px`;
+            
+            slides.forEach(slide => {
+                slide.style.width = `${slideWidth}px`;
+            });
+            
+            function goToSlide(index) {
+                currentIndex = index;
+                testimonialTrack.style.transform = `translateX(-${currentIndex * slideWidth}px)`;
+                
+                dots.forEach((dot, i) => {
+                    dot.classList.toggle('active', i === currentIndex);
+                });
+            }
+            
+            function nextSlide() {
+                const newIndex = (currentIndex + 1) % slides.length;
+                goToSlide(newIndex);
+            }
+            
+            // Auto-advance every 3 seconds
+            slideInterval = setInterval(nextSlide, 3000);
+            
+            // Navigation buttons
+            const prevBtn = document.querySelector('.prev-testimonial');
+            const nextBtn = document.querySelector('.next-testimonial');
+            
+            if (prevBtn) {
+                prevBtn.addEventListener('click', () => {
+                    const newIndex = (currentIndex - 1 + slides.length) % slides.length;
+                    goToSlide(newIndex);
+                });
+            }
+            
+            if (nextBtn) {
+                nextBtn.addEventListener('click', () => {
+                    nextSlide();
+                });
+            }
+            
+            // Dot navigation
+            dots.forEach((dot, index) => {
+                dot.addEventListener('click', () => {
+                    goToSlide(index);
+                });
+            });
+            
+            goToSlide(0);
+        }
+        
+        // Add new review function
+        window.addNewReview = function(name, service, message, rating) {
+            const testimonialTrack = document.querySelector('.testimonial-track');
+            if (!testimonialTrack) return;
+            
+            let starsHTML = '';
+            for (let i = 1; i <= 5; i++) {
+                if (i <= rating) {
+                    starsHTML += '<i class="fas fa-star"></i>';
+                } else {
+                    starsHTML += '<i class="far fa-star"></i>';
+                }
+            }
+            
+            const newSlide = document.createElement('div');
+            newSlide.className = 'testimonial-slide';
+            newSlide.innerHTML = `
+                <div class="testimonial-content">
+                    <div class="testimonial-text">
+                        <p>${message}</p>
+                    </div>
+                    <div class="testimonial-author">
+                        <div class="author-image">
+                            <img src="https://randomuser.me/api/portraits/lego/1.jpg" alt="Patient">
+                        </div>
+                        <div class="author-info">
+                            <h4>${name}</h4>
+                            <p>${service} Patient</p>
+                        </div>
+                        <div class="testimonial-rating">
+                            ${starsHTML}
+                        </div>
+                    </div>
+                </div>
+            `;
+            
+            testimonialTrack.appendChild(newSlide);
+            
+            // Add new dot
+            const dotsContainer = document.querySelector('.testimonial-dots');
+            if (dotsContainer) {
+                const newDot = document.createElement('span');
+                newDot.className = 'dot';
+                newDot.setAttribute('data-slide', slides.length);
+                dotsContainer.appendChild(newDot);
+                
+                newDot.addEventListener('click', () => {
+                    goToSlide(slides.length);
+                });
+            }
+            
+            // Reinitialize slider
+            clearInterval(slideInterval);
+            initTestimonialSlider();
+        };
+        
+        // Initialize when DOM is ready
+        document.addEventListener('DOMContentLoaded', initTestimonialSlider);
+    </script>
 </body>
 </html>
