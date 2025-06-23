@@ -65,6 +65,14 @@ async function getReviews(res) {
         message: 'Quick and efficient service. Very satisfied with the home visit.',
         rating: 5,
         date: '2024-06-10'
+      },
+      {
+        id: 'default-3',
+        name: 'Fatima Khan',
+        service: 'IV Line',
+        message: 'Professional staff and excellent care. Highly recommended!',
+        rating: 5,
+        date: '2024-06-05'
       }
     ];
 
@@ -104,15 +112,12 @@ async function addReview(req, res) {
       message: message.trim(),
       date: new Date().toISOString().split('T')[0],
       timestamp: new Date().toISOString(),
-      approved: true, // Auto-approve all reviews (change to false if you want manual approval)
+      approved: true, // Auto-approve all reviews
       ip: req.headers['x-forwarded-for'] || req.connection.remoteAddress
     };
 
     // Store in Vercel KV
     await kv.set(reviewId, review);
-
-    // Also store in a list for easier querying (optional)
-    await kv.lpush('reviews:list', reviewId);
 
     return res.status(201).json({
       success: true,

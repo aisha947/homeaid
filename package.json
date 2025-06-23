@@ -1,12 +1,12 @@
 {
-  "name": "homeaid-website",
+  "name": "homeaid-reviews",
   "version": "1.0.0",
-  "description": "HomeAid Services Website",
-  "main": "index.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "HomeAid Services website with automated reviews",
   "dependencies": {
-    "mongodb": "^4.13.0"
+    "@vercel/kv": "^1.0.0"
+  },
+  "scripts": {
+    "dev": "vercel dev",
+    "build": "echo 'Static site - no build needed'"
   }
 }
