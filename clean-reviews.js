@@ -3,7 +3,66 @@
 
 class CleanReviews {
     constructor() {
-        this.reviews = [
+        this.reviews = [];
+        this.currentSlide = 0;
+        this.autoScrollInterval = null;
+        this.autoScrollDelay = 12000; // 12 seconds
+        this.isTransitioning = false;
+        
+        this.init();
+    }
+
+    init() {
+        console.log('🚀 Initializing Clean Reviews System');
+        
+        // Wait for DOM to be ready
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', () => this.setup());
+        } else {
+            this.setup();
+        }
+    }
+
+    async setup() {
+        console.log('🎯 Setting up reviews...');
+        
+        await this.loadReviews();
+        this.displayReviews();
+        this.createControls();
+        this.setupFormHandler();
+        this.setupModalHandlers();
+        this.setupStarRating();
+        this.startAutoScroll();
+        
+        console.log('✅ Clean Reviews System ready!');
+    }
+
+    async loadReviews() {
+        try {
+            console.log('🔍 Loading reviews from Redis API...');
+            const response = await fetch('/api/reviews');
+            
+            if (response.ok) {
+                const data = await response.json();
+                this.reviews = data.reviews || [];
+                console.log('✅ Loaded reviews from Redis database:', this.reviews.length);
+            } else {
+                throw new Error(`API returned status: ${response.status}`);
+            }
+        } catch (error) {
+            console.log('⚠️ API not available, using fallback reviews:', error.message);
+            this.reviews = this.getFallbackReviews();
+        }
+
+        // Ensure we always have reviews to display
+        if (this.reviews.length === 0) {
+            console.log('📝 No reviews found, loading defaults...');
+            this.reviews = this.getFallbackReviews();
+        }
+    }
+
+    getFallbackReviews() {
+        return [
             {
                 name: 'Sarah Ahmed',
                 service: 'IV Medication',
@@ -33,37 +92,6 @@ class CleanReviews {
                 date: '2024-06-01'
             }
         ];
-        
-        this.currentSlide = 0;
-        this.autoScrollInterval = null;
-        this.autoScrollDelay = 12000; // 12 seconds
-        this.isTransitioning = false;
-        
-        this.init();
-    }
-
-    init() {
-        console.log('🚀 Initializing Clean Reviews System');
-        
-        // Wait for DOM to be ready
-        if (document.readyState === 'loading') {
-            document.addEventListener('DOMContentLoaded', () => this.setup());
-        } else {
-            this.setup();
-        }
-    }
-
-    setup() {
-        console.log('🎯 Setting up reviews...');
-        
-        this.displayReviews();
-        this.createControls();
-        this.setupFormHandler();
-        this.setupModalHandlers();
-        this.setupStarRating();
-        this.startAutoScroll();
-        
-        console.log('✅ Clean Reviews System ready!');
     }
 
     displayReviews() {
